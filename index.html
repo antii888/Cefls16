@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CEFL Season 16 Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Oswald:wght@400;500;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f5f0e8;--bg2:#ede8dc;--paper:#faf7f2;--ink:#1a1208;
+  --red:#c0392b;--red2:#e74c3c;--gold:#b8860b;--gold2:#d4a017;
+  --green:#2d5a27;--blue:#1a3a5c;
+  --pip:#8b1a1a;--lir:#1a3a8b;
+  --border:#8b7355;--muted:#6b5d4a;--conf:#c0392b;--inter:#1a3a5c;
+  --shadow:rgba(26,18,8,0.15);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:'Source Serif 4',serif;min-height:100vh;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23b8860b' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+
+/* Newspaper texture overlay */
+body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg,rgba(245,240,232,.95) 0%,rgba(237,232,220,.95) 100%);pointer-events:none;z-index:0;}
+
+.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 20px;}
+
+/* MASTHEAD */
+.masthead{border-bottom:4px double var(--ink);padding:16px 0 12px;margin-bottom:0;}
+.masthead-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.masthead-date{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.masthead-links{display:flex;gap:16px;}
+.masthead-links a{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--border);}
+.masthead-links a:hover{color:var(--red);}
+.masthead-main{text-align:center;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);padding:8px 0;margin-bottom:8px;}
+.paper-name{font-family:'Playfair Display',serif;font-size:clamp(36px,8vw,80px);font-weight:900;letter-spacing:2px;line-height:1;color:var(--ink);}
+.paper-tagline{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+.masthead-bottom{display:flex;justify-content:space-between;align-items:center;}
+.edition-info{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:1px;color:var(--muted);}
+
+/* Section headers */
+.section-rule{display:flex;align-items:center;gap:12px;margin:24px 0 16px;}
+.section-rule::before,.section-rule::after{content:'';flex:1;height:2px;background:var(--ink);}
+.section-title{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:4px;text-transform:uppercase;white-space:nowrap;padding:0 8px;}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin-bottom:20px;padding:10px;border:1px solid var(--border);background:var(--paper);}
+.legend-item{display:flex;align-items:center;gap:6px;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
+
+/* Standings */
+.standings-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px;}
+@media(max-width:680px){.standings-grid{grid-template-columns:1fr;}}
+.standings-card{background:var(--paper);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);}
+.standings-head{padding:10px 16px;border-bottom:2px solid var(--ink);display:flex;align-items:center;gap:10px;background:var(--ink);}
+.conf-name{font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bg);}
+.conf-name.pip{color:#ffcc88;}
+.conf-name.lir{color:#88ccff;}
+.standings-table{width:100%;border-collapse:collapse;}
+.standings-table td{padding:8px 16px;font-size:13px;border-bottom:1px solid var(--bg2);}
+.standings-table tr:last-child td{border-bottom:none;}
+.standings-table .rank{color:var(--muted);font-size:11px;width:20px;font-family:'Oswald',sans-serif;}
+.standings-table .tname{font-family:'Oswald',sans-serif;font-size:15px;font-weight:600;letter-spacing:.5px;}
+.standings-table .tname.playoff{color:var(--red);}
+.standings-table .record{color:var(--muted);text-align:right;font-family:'Oswald',sans-serif;}
+.standings-table .diff{text-align:right;font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;}
+.diff.pos{color:var(--green);}
+.diff.neg{color:var(--red);}
+
+/* Controls */
+.controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;}
+.view-team{display:flex;align-items:center;gap:8px;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.view-team select{background:var(--paper);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:13px;padding:6px 12px;cursor:pointer;outline:none;}
+.week-filters{display:flex;flex-wrap:wrap;gap:5px;}
+.wf-btn{background:var(--paper);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:1px;padding:5px 10px;cursor:pointer;transition:all .15s;}
+.wf-btn:hover{background:var(--ink);color:var(--bg);}
+.wf-btn.active{background:var(--ink);color:var(--bg);}
+
+/* Week blocks */
+.week-block{margin-bottom:36px;}
+.week-header{display:flex;align-items:baseline;gap:12px;margin-bottom:12px;border-bottom:3px solid var(--ink);padding-bottom:6px;}
+.week-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--ink);}
+.week-num{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;}
+
+/* Game card - newspaper box score style */
+.game-card{background:var(--paper);border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);overflow:hidden;transition:transform .15s,box-shadow .15s;}
+.game-card:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink);}
+.game-card-head{padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--ink);background:var(--bg2);}
+.game-type{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:2px 7px;font-weight:700;}
+.game-type.conference{background:var(--pip);color:white;}
+.game-type.inter{background:var(--blue);color:white;}
+.game-result-tag{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1px;padding:2px 7px;text-transform:uppercase;font-weight:700;}
+.game-result-tag.final{background:var(--ink);color:var(--bg);}
+.game-result-tag.upcoming{border:1px solid var(--border);color:var(--muted);}
+.game-card-body{padding:12px;}
+.matchup{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.team-side{flex:1;min-width:0;}
+.team-side.away{text-align:right;}
+.team-conf-tag{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+.team-conf-tag.pip{color:var(--pip);}
+.team-conf-tag.lir{color:var(--lir);}
+.team-nm{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;line-height:1;letter-spacing:.5px;}
+.team-nm.winner{color:var(--red);}
+.score-area{text-align:center;min-width:64px;}
+.score{font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;letter-spacing:2px;}
+.score-vs{font-family:'Playfair Display',serif;font-size:14px;color:var(--muted);font-style:italic;}
+.game-card-stats{background:var(--bg2);border-top:1px solid var(--border);padding:8px 12px;}
+.stat-line{font-size:11px;color:var(--muted);line-height:1.6;}
+.stat-line strong{color:var(--ink);}
+.no-stats{font-family:'Oswald',sans-serif;font-size:11px;color:var(--muted);letter-spacing:1px;text-align:center;padding:4px 0;font-style:italic;}
+.stats-row{display:flex;justify-content:space-between;gap:8px;}
+.stat-block{flex:1;}
+.stat-block.right{text-align:right;}
+
+/* Rivalry badge */
+.rivalry-badge{background:var(--red);color:white;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:2px;padding:1px 6px;text-transform:uppercase;font-weight:700;}
+
+/* Footer */
+footer{border-top:4px double var(--ink);padding:20px;text-align:center;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;color:var(--muted);margin-top:20px;}
+footer a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--border);margin:0 8px;}
+footer a:hover{color:var(--red);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-top">
+    <div class="masthead-date">CEFL · Season 16 · Official Record</div>
+    <div class="masthead-links">
+      <a href="submit.html">Submit Stats</a>
+      <a href="stats.html">Leaderboard</a>
+      <a href="admin.html">Admin</a>
+    </div>
+  </div>
+  <div class="masthead-main">
+    <div class="paper-name">THE CEFL GAZETTE</div>
+    <div class="paper-tagline">College Era Football League · Season 16 · Official Schedule</div>
+  </div>
+  <div class="masthead-bottom">
+    <div class="edition-info">Pain is Power Conference · Luv is Rage Conference</div>
+    <div class="edition-info">Est. CEFL Season 1 · All Rights Reserved</div>
+  </div>
+</div>
+
+<div class="section-rule"><span class="section-title">Conference Standings</span></div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--pip)"></div>Conference Game</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Inter-Conference</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>★ Rivalry</div>
+</div>
+
+<div class="standings-grid" id="standingsGrid"></div>
+
+<div class="section-rule"><span class="section-title">Schedule</span></div>
+
+<div class="controls">
+  <div class="view-team">
+    View:<select id="teamFilter" onchange="filterTeam()">
+      <option value="all">All Teams</option>
+      <optgroup label="Pain is Power">
+        <option value="Baylor">Baylor Bears</option>
+        <option value="KState">Kansas State Wildcats</option>
+        <option value="Memphis">Memphis Tigers</option>
+        <option value="Oregon">Oregon Ducks</option>
+      </optgroup>
+      <optgroup label="Luv is Rage">
+        <option value="AirForce">Air Force Falcons</option>
+        <option value="Auburn">Auburn Tigers</option>
+        <option value="TexasAM">Texas A&M Aggies</option>
+        <option value="UCLA">UCLA Bruins</option>
+      </optgroup>
+    </select>
+  </div>
+  <div class="week-filters" id="weekFilters"></div>
+</div>
+
+<div id="scheduleContainer"></div>
+
+<footer>THE CEFL GAZETTE · <a href="submit.html">Submit Stats</a> · <a href="stats.html">Leaderboard</a> · <a href="admin.html">Admin</a></footer>
+</div>
+
+<script>
+const TEAM_NAMES={Baylor:"Baylor Bears",KState:"Kansas State Wildcats",Memphis:"Memphis Tigers",Oregon:"Oregon Ducks",AirForce:"Air Force Falcons",Auburn:"Auburn Tigers",TexasAM:"Texas A&M Aggies",UCLA:"UCLA Bruins"};
+const TEAMS={Baylor:{conf:"PIP"},KState:{conf:"PIP"},Memphis:{conf:"PIP"},Oregon:{conf:"PIP"},AirForce:{conf:"LIR"},Auburn:{conf:"LIR"},TexasAM:{conf:"LIR"},UCLA:{conf:"LIR"}};
+const PIP=["Baylor","KState","Memphis","Oregon"];
+const LIR=["AirForce","Auburn","TexasAM","UCLA"];
+
+// Rivalry pairs (conference games that are heated)
+const RIVALRIES=[["Baylor","Memphis"],["KState","Oregon"],["AirForce","UCLA"],["Auburn","TexasAM"]];
+function isRivalry(a,b){return RIVALRIES.some(r=>r.includes(a)&&r.includes(b));}
+
+const SCHEDULE=[
+  {week:1,games:[
+    {home:"Baylor",away:"Oregon",type:"conference"},
+    {home:"Memphis",away:"UCLA",type:"inter"},
+    {home:"AirForce",away:"KState",type:"inter"},
+    {home:"Auburn",away:"TexasAM",type:"conference"},
+  ]},
+  {week:2,games:[
+    {home:"Auburn",away:"UCLA",type:"conference"},
+    {home:"Oregon",away:"KState",type:"conference"},
+    {home:"TexasAM",away:"Memphis",type:"inter"},
+    {home:"Baylor",away:"AirForce",type:"inter"},
+  ]},
+  {week:3,games:[
+    {home:"Oregon",away:"UCLA",type:"inter"},
+    {home:"Baylor",away:"Auburn",type:"inter"},
+    {home:"AirForce",away:"TexasAM",type:"conference"},
+    {home:"KState",away:"Memphis",type:"conference"},
+  ]},
+  {week:4,games:[
+    {home:"TexasAM",away:"UCLA",type:"conference"},
+    {home:"Oregon",away:"Memphis",type:"conference"},
+    {home:"AirForce",away:"Auburn",type:"conference"},
+    {home:"Baylor",away:"KState",type:"conference"},
+  ]},
+  {week:5,games:[
+    {home:"UCLA",away:"Memphis",type:"inter"},
+    {home:"Baylor",away:"TexasAM",type:"inter"},
+    {home:"KState",away:"Oregon",type:"conference"},
+    {home:"Auburn",away:"AirForce",type:"conference"},
+  ]},
+  {week:6,games:[
+    {home:"Auburn",away:"KState",type:"inter"},
+    {home:"Oregon",away:"AirForce",type:"inter"},
+    {home:"Memphis",away:"Baylor",type:"conference"},
+    {home:"UCLA",away:"TexasAM",type:"conference"},
+  ]},
+  {week:7,games:[
+    {home:"Oregon",away:"Baylor",type:"conference"},
+    {home:"TexasAM",away:"Auburn",type:"conference"},
+    {home:"KState",away:"UCLA",type:"inter"},
+    {home:"Memphis",away:"AirForce",type:"inter"},
+  ]},
+  {week:8,games:[
+    {home:"KState",away:"Baylor",type:"conference"},
+    {home:"Memphis",away:"Auburn",type:"inter"},
+    {home:"UCLA",away:"AirForce",type:"conference"},
+    {home:"Oregon",away:"TexasAM",type:"inter"},
+  ]},
+  {week:9,games:[
+    {home:"AirForce",away:"Baylor",type:"inter"},
+    {home:"Memphis",away:"TexasAM",type:"inter"},
+    {home:"UCLA",away:"Oregon",type:"inter"},
+    {home:"KState",away:"Auburn",type:"inter"},
+  ]},
+  {week:10,games:[
+    {home:"Baylor",away:"Memphis",type:"conference"},
+    {home:"KState",away:"AirForce",type:"inter"},
+    {home:"UCLA",away:"Auburn",type:"conference"},
+    {home:"TexasAM",away:"Oregon",type:"inter"},
+  ]},
+  {week:11,games:[
+    {home:"Memphis",away:"Oregon",type:"conference"},
+    {home:"AirForce",away:"UCLA",type:"conference"},
+    {home:"KState",away:"TexasAM",type:"inter"},
+    {home:"Auburn",away:"Baylor",type:"inter"},
+  ]},
+  {week:12,games:[
+    {home:"Baylor",away:"UCLA",type:"inter"},
+    {home:"TexasAM",away:"AirForce",type:"conference"},
+    {home:"Oregon",away:"Auburn",type:"inter"},
+    {home:"Memphis",away:"KState",type:"conference"},
+  ]},
+];
+
+const SK='cefl_s16_stats';
+function getData(){try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch(e){return[];}}
+function getApproved(){return getData().filter(s=>s.status==='approved');}
+
+function buildStandings(){
+  const stats=getApproved();
+  const records={};
+  Object.keys(TEAMS).forEach(t=>{records[t]={w:0,l:0,diff:0};});
+  const games={};
+  stats.forEach(s=>{
+    if(!s.score) return;
+    const key='w'+s.week+'_'+[s.home,s.away].sort().join('_');
+    if(!games[key]) games[key]={home:s.home,away:s.away,scores:{}};
+    if(!games[key].scores[s.team]) games[key].scores[s.team]=parseInt(s.score)||0;
+  });
+  Object.values(games).forEach(g=>{
+    const hs=g.scores[g.home]??null,as=g.scores[g.away]??null;
+    if(hs===null||as===null) return;
+    if(hs>as){records[g.home].w++;records[g.away].l++;}
+    else if(as>hs){records[g.away].w++;records[g.home].l++;}
+    records[g.home].diff+=hs-as;records[g.away].diff+=as-hs;
+  });
+
+  function confHTML(conf,teams,confName,cls){
+    const sorted=[...teams].sort((a,b)=>{
+      const ra=records[a],rb=records[b];
+      const ga=ra.w+ra.l,gb=rb.w+rb.l;
+      const wa=ga?ra.w/ga:0,wb=gb?rb.w/gb:0;
+      return wb-wa||rb.diff-ra.diff;
+    });
+    return `<div class="standings-card">
+      <div class="standings-head"><span class="conf-name ${cls}">${confName}</span></div>
+      <table class="standings-table">
+        ${sorted.map((t,i)=>{
+          const r=records[t],d=r.diff,pl=r.w>r.l?'playoff':'';
+          return `<tr><td class="rank">${i+1}</td><td class="tname ${pl}">${pl?'★ ':''}${TEAM_NAMES[t]}</td><td class="record">${r.w}-${r.l}</td><td class="diff ${d>0?'pos':d<0?'neg':''}">${d===0?'—':d>0?'+'+d:d}</td></tr>`;
+        }).join('')}
+      </table>
+    </div>`;
+  }
+  document.getElementById('standingsGrid').innerHTML=
+    confHTML('PIP',PIP,'Pain is Power Conference','pip')+
+    confHTML('LIR',LIR,'Luv is Rage Conference','lir');
+}
+
+function buildWeekFilters(){
+  let h=`<button class="wf-btn active" onclick="filterWeek('all',this)">All</button>`;
+  for(let w=1;w<=12;w++) h+=`<button class="wf-btn" onclick="filterWeek(${w},this)">Wk ${w}</button>`;
+  document.getElementById('weekFilters').innerHTML=h;
+}
+function filterWeek(w,btn){
+  document.querySelectorAll('.wf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.week-block').forEach(b=>{b.style.display=(w==='all'||b.dataset.week==w)?'':'none';});
+}
+function filterTeam(){
+  const t=document.getElementById('teamFilter').value;
+  document.querySelectorAll('.game-card').forEach(c=>{c.style.display=(t==='all'||c.dataset.home===t||c.dataset.away===t)?'':'none';});
+  document.querySelectorAll('.week-block').forEach(b=>{
+    const vis=[...b.querySelectorAll('.game-card')].some(c=>c.style.display!=='none');
+    b.style.display=vis?'':'none';
+  });
+}
+
+function buildSchedule(){
+  const approved=getApproved();
+  const statMap={};
+  approved.forEach(s=>{
+    const key='w'+s.week+'_'+[s.home,s.away].sort().join('_');
+    if(!statMap[key]) statMap[key]=[];
+    statMap[key].push(s);
+  });
+  let html='';
+  SCHEDULE.forEach(wk=>{
+    html+=`<div class="week-block" data-week="${wk.week}">
+      <div class="week-header"><span class="week-title">Week ${wk.week}</span><span class="week-num">CEFL Season 16</span></div>
+      <div class="games-grid">`;
+    wk.games.forEach(g=>{
+      const key='w'+wk.week+'_'+[g.home,g.away].sort().join('_');
+      const gStats=statMap[key]||[];
+      const homeStat=gStats.filter(s=>s.team===g.home).slice(-1)[0];
+      const awayStat=gStats.filter(s=>s.team===g.away).slice(-1)[0];
+      const hs=homeStat?.score??null,as=awayStat?.score??null;
+      const hasScore=hs!==null&&as!==null;
+      const homeWin=hasScore&&parseInt(hs)>parseInt(as);
+      const awayWin=hasScore&&parseInt(as)>parseInt(hs);
+      const hc=(TEAMS[g.home]?.conf||'PIP').toLowerCase();
+      const ac=(TEAMS[g.away]?.conf||'LIR').toLowerCase();
+      const rivalry=isRivalry(g.home,g.away);
+      const typeLabel=g.type==='conference'?'Conference':'Inter-Conference';
+      html+=`<div class="game-card" data-home="${g.home}" data-away="${g.away}">
+        <div class="game-card-head">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="game-type ${g.type}">${typeLabel}</span>
+            ${rivalry?`<span class="rivalry-badge">★ Rivalry</span>`:''}
+          </div>
+          ${hasScore?`<span class="game-result-tag final">Final</span>`:`<span class="game-result-tag upcoming">Upcoming</span>`}
+        </div>
+        <div class="game-card-body">
+          <div class="matchup">
+            <div class="team-side home">
+              <div class="team-conf-tag ${hc}">${TEAMS[g.home]?.conf}</div>
+              <div class="team-nm ${homeWin?'winner':''}">${homeWin?'★ ':''}${TEAM_NAMES[g.home]||g.home}</div>
+            </div>
+            <div class="score-area">${hasScore?`<div class="score">${hs}–${as}</div>`:`<div class="score-vs">vs.</div>`}</div>
+            <div class="team-side away">
+              <div class="team-conf-tag ${ac}">${TEAMS[g.away]?.conf}</div>
+              <div class="team-nm ${awayWin?'winner':''}">${TEAM_NAMES[g.away]||g.away}${awayWin?' ★':''}</div>
+            </div>
+          </div>
+        </div>
+        <div class="game-card-stats">`;
+      if(gStats.length>0){
+        html+=`<div class="stats-row"><div class="stat-block">`;
+        if(homeStat){
+          html+=`<div class="stat-line"><strong>${homeStat.player_name||g.home}</strong></div>`;
+          if(homeStat.pass_tds) html+=`<div class="stat-line">Pass TDs: <strong>${homeStat.pass_tds}</strong>${homeStat.ints_thrown?` · INTs: <strong>${homeStat.ints_thrown}</strong>`:''}</div>`;
+          if(homeStat.rush_tds) html+=`<div class="stat-line">Rush TDs: <strong>${homeStat.rush_tds}</strong></div>`;
+        }
+        html+=`</div><div class="stat-block right">`;
+        if(awayStat){
+          html+=`<div class="stat-line"><strong>${awayStat.player_name||g.away}</strong></div>`;
+          if(awayStat.pass_tds) html+=`<div class="stat-line">Pass TDs: <strong>${awayStat.pass_tds}</strong>${awayStat.ints_thrown?` · INTs: <strong>${awayStat.ints_thrown}</strong>`:''}</div>`;
+          if(awayStat.rush_tds) html+=`<div class="stat-line">Rush TDs: <strong>${awayStat.rush_tds}</strong></div>`;
+        }
+        html+=`</div></div>`;
+      } else {
+        html+=`<div class="no-stats">— Stats pending —</div>`;
+      }
+      html+=`</div></div>`;
+    });
+    html+=`</div></div>`;
+  });
+  document.getElementById('scheduleContainer').innerHTML=html;
+}
+buildStandings();buildWeekFilters();buildSchedule();
+</script>
+</body>
+</html>
