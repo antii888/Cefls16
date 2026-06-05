@@ -265,6 +265,7 @@ const SCHEDULE=[
   ]},
 ];
 
+const WEEK_DATES=["June 4 - June 6","June 7 - June 9","June 10 - June 12","June 13 - June 15","June 16 - June 18","June 19 - June 21","June 22 - June 24","June 25 - June 27","June 28 - June 30","July 1 - July 3","July 4 - July 6","July 7 - July 9"];
 const SK='cefl_s16_stats';
 function getData(){try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch(e){return[];}}
 function getApproved(){return getData().filter(s=>s.status==='approved');}
@@ -340,7 +341,7 @@ function buildSchedule(){
   let html='';
   SCHEDULE.forEach(wk=>{
     html+=`<div class="week-block" data-week="${wk.week}">
-      <div class="week-header"><span class="week-title">Week ${wk.week}</span><span class="week-num">CEFL Season 16</span></div>
+      <div class="week-header"><span class="week-title">Week ${wk.week}</span><span class="week-num">CEFL Season 16 &nbsp;·&nbsp; ${WEEK_DATES[wk.week-1]}</span></div>
       <div class="games-grid">`;
     wk.games.forEach(g=>{
       const key='w'+wk.week+'_'+[g.home,g.away].sort().join('_');
