@@ -3,52 +3,54 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CEFL S16 · Admin</title>
+<title>CEFL S16 Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script>
+function checkPw(){
+  var val=document.getElementById('pwInput').value;
+  if(val==='CEFL231'){
+    document.getElementById('pwGate').style.display='none';
+    document.getElementById('adminContent').style.display='block';
+    try{sessionStorage.setItem('cefl_admin','1');}catch(e){}
+  } else {
+    document.getElementById('pwError').style.display='block';
+    document.getElementById('pwInput').value='';
+  }
+}
+</script>
 <style>
-:root{--bg:#f5f0e8;--bg2:#ede8dc;--paper:#faf7f2;--ink:#1a1208;--red:#c0392b;--gold:#b8860b;--border:#8b7355;--muted:#6b5d4a;--green:#2d5a27;--blue:#1a3a5c;}
 *{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#f5f0e8;--bg2:#ede8dc;--paper:#faf7f2;--ink:#1a1208;--red:#c0392b;--gold:#b8860b;--border:#8b7355;--muted:#6b5d4a;--muted2:#8b7355;--green:#2d5a27;--blue:#1a3a5c;}
 body{background:var(--bg);color:var(--ink);font-family:'Oswald',sans-serif;min-height:100vh;}
-
-/* PASSWORD */
-#pwGate{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23b8860b' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+#pwGate{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;}
 #adminContent{display:none;}
 .pw-box{background:var(--paper);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:40px;width:100%;max-width:400px;text-align:center;}
 .pw-icon{font-size:32px;margin-bottom:12px;}
 .pw-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;margin-bottom:6px;}
 .pw-sub{font-size:13px;color:var(--muted);margin-bottom:24px;font-style:italic;}
-.pw-input{width:100%;background:var(--bg);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:16px;padding:12px 16px;text-align:center;letter-spacing:3px;outline:none;margin-bottom:10px;}
-.pw-input:focus{border-color:var(--red);}
+.pw-input{width:100%;background:var(--bg2);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:16px;padding:12px 16px;text-align:center;letter-spacing:3px;outline:none;margin-bottom:10px;}
 .pw-btn{width:100%;background:var(--ink);color:var(--bg);font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:12px;border:none;cursor:pointer;}
 .pw-btn:hover{background:var(--red);}
 .pw-error{color:var(--red);font-size:12px;margin-top:8px;display:none;font-style:italic;}
-
-/* TOPBAR */
 .topbar{background:var(--ink);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;}
 .topbar-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--bg);}
 .topbar-title span{color:#ffcc88;}
-.topbar-sub{font-size:11px;color:rgba(245,240,232,.5);letter-spacing:1px;}
-.tb-btn{background:transparent;border:1px solid rgba(245,240,232,.3);color:rgba(245,240,232,.7);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:1px;padding:6px 12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
-.tb-btn:hover{border-color:var(--bg);color:var(--bg);}
+.topbar-sub{font-size:11px;color:rgba(245,240,232,.5);}
+.tb-btn{background:transparent;border:1px solid rgba(245,240,232,.3);color:rgba(245,240,232,.7);font-family:'Oswald',sans-serif;font-size:11px;padding:6px 12px;cursor:pointer;text-decoration:none;}
+.tb-btn:hover{color:var(--bg);border-color:var(--bg);}
 .topbar-right{display:flex;gap:8px;}
-
-/* LAYOUT */
-.layout{display:grid;grid-template-columns:190px 1fr;min-height:calc(100vh - 53px);}
+.layout{display:grid;grid-template-columns:200px 1fr;min-height:calc(100vh - 53px);}
 .sidebar{background:var(--bg2);border-right:2px solid var(--border);padding:20px 0;}
 .sidebar-label{font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);padding:0 16px 8px;}
-.sidebar-item{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;cursor:pointer;border-left:3px solid transparent;font-size:13px;color:var(--muted);letter-spacing:.5px;}
+.sidebar-item{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;cursor:pointer;border-left:3px solid transparent;font-size:13px;color:var(--muted);}
 .sidebar-item:hover{background:rgba(26,18,8,.05);color:var(--ink);}
-.sidebar-item.active{border-left-color:var(--red);color:var(--red);background:rgba(192,57,43,.05);}
+.sidebar-item.active{border-left-color:var(--red);color:var(--red);}
 .badge{background:var(--red);color:white;font-size:10px;font-weight:700;padding:1px 6px;border-radius:2px;}
 .badge.green{background:var(--green);}
-.badge.gray{background:var(--muted);}
-
-/* MAIN */
-.main{padding:24px;overflow-y:auto;background:var(--bg);}
+.badge.gray{background:var(--muted);color:var(--bg);}
+.main{padding:24px;overflow-y:auto;}
 .main-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;margin-bottom:4px;}
-.main-sub{color:var(--muted);font-size:12px;letter-spacing:1px;margin-bottom:20px;font-style:italic;}
-
-/* SUMMARY */
+.main-sub{color:var(--muted);font-size:12px;margin-bottom:20px;font-style:italic;}
 .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:24px;}
 .summary-card{background:var(--paper);border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);padding:14px;}
 .summary-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;}
@@ -57,22 +59,18 @@ body{background:var(--bg);color:var(--ink);font-family:'Oswald',sans-serif;min-h
 .summary-num.green{color:var(--green);}
 .summary-num.blue{color:var(--blue);}
 .summary-label{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:1px;text-transform:uppercase;}
-
-/* FILTERS */
 .filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
 .filter-input{background:var(--paper);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:13px;padding:7px 12px;outline:none;flex:1;min-width:160px;}
 .filter-select{background:var(--paper);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:13px;padding:7px 12px;cursor:pointer;outline:none;}
-
-/* TABLE */
 .table-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
-table th{text-align:left;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--ink);border-bottom:2px solid var(--ink);}
+table th{text-align:left;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--ink);}
 table td{padding:12px;}
 tr{border-bottom:1px solid var(--bg2);}
 tr:last-child{border-bottom:none;}
 tr:hover td{background:var(--bg2);}
-.player-name{font-weight:700;font-size:14px;font-family:'Oswald',sans-serif;}
-.player-meta{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:.5px;}
+.player-name{font-weight:700;font-size:14px;}
+.player-meta{font-size:11px;color:var(--muted);margin-top:2px;}
 .status-badge{display:inline-flex;font-size:10px;font-weight:700;padding:2px 8px;letter-spacing:1px;text-transform:uppercase;}
 .status-badge.pending{background:rgba(184,134,11,.1);color:var(--gold);border:1px solid rgba(184,134,11,.3);}
 .status-badge.approved{background:rgba(45,90,39,.1);color:var(--green);border:1px solid rgba(45,90,39,.3);}
@@ -80,67 +78,49 @@ tr:hover td{background:var(--bg2);}
 .stat-chip{background:var(--bg2);border:1px solid var(--border);padding:2px 7px;font-size:11px;color:var(--muted);display:inline-block;margin:2px;}
 .stat-chip strong{color:var(--ink);}
 .action-row{display:flex;gap:5px;flex-wrap:wrap;}
-.action-btn{font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;letter-spacing:.5px;border:none;}
+.action-btn{font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;border:none;}
 .action-btn.approve{background:rgba(45,90,39,.1);color:var(--green);border:1px solid rgba(45,90,39,.3);}
 .action-btn.reject{background:rgba(192,57,43,.1);color:var(--red);border:1px solid rgba(192,57,43,.3);}
 .action-btn.edit{background:rgba(26,58,92,.1);color:var(--blue);border:1px solid rgba(26,58,92,.3);}
 .action-btn.del{background:transparent;color:var(--muted);border:1px solid var(--border);}
-.empty{text-align:center;padding:48px;color:var(--muted);font-size:13px;font-style:italic;letter-spacing:1px;}
-
-/* SCORES */
-.scores-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
-.score-card{background:var(--paper);border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);}
-.score-card-head{background:var(--ink);padding:8px 14px;display:flex;justify-content:space-between;align-items:center;}
-.score-card-week{font-family:'Playfair Display',serif;font-size:14px;font-weight:900;color:var(--bg);}
-.score-card-type{font-size:10px;letter-spacing:2px;color:rgba(245,240,232,.5);text-transform:uppercase;}
-.score-card-body{padding:14px;}
-.score-matchup{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.score-team{flex:1;font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;}
-.score-team.away{text-align:right;}
-.score-vs{font-size:11px;color:var(--muted);}
-.score-inputs{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.score-input{flex:1;background:var(--bg);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;padding:7px;text-align:center;outline:none;width:100%;}
-.score-input:focus{border-color:var(--red);}
-.score-dash{font-size:18px;color:var(--muted);}
-.score-save-btn{width:100%;background:var(--ink);color:var(--bg);font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:9px;border:none;cursor:pointer;}
-.score-save-btn:hover{background:var(--red);}
-.score-saved{font-size:11px;color:var(--green);text-align:center;margin-top:6px;display:none;font-style:italic;}
-.week-section{margin-bottom:24px;}
-.week-section-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--ink);}
-/* MODAL */
+.empty{text-align:center;padding:48px;color:var(--muted);font-size:13px;font-style:italic;}
 .modal-overlay{position:fixed;inset:0;background:rgba(26,18,8,.7);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--paper);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
 .modal-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;margin-bottom:20px;}
 .mfield{margin-bottom:12px;}
 .mfield label{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-.mfield input,.mfield select{width:100%;background:var(--bg);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:13px;padding:8px 12px;outline:none;}
-.mfield input:focus,.mfield select:focus{border-color:var(--red);}
+.mfield input,.mfield select{width:100%;background:var(--bg2);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:13px;padding:8px 12px;outline:none;}
 .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.msec{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+.msec{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin:16px 0 8px;}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
 .mbtn{font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;padding:9px 20px;cursor:pointer;border:none;text-transform:uppercase;}
 .mbtn.save{background:var(--ink);color:var(--bg);}
-.mbtn.save:hover{background:var(--red);}
 .mbtn.cancel{background:transparent;border:2px solid var(--ink);color:var(--ink);}
+.score-week-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--ink);}
+.score-game-row{background:var(--paper);border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.score-game-label{flex:1;min-width:100px;font-size:13px;font-weight:600;}
+.score-inputs{display:flex;align-items:center;gap:8px;}
+.score-team-label{font-size:11px;color:var(--muted);}
+.score-input{width:60px;background:var(--bg2);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;padding:5px 8px;text-align:center;outline:none;}
+.score-saved{background:rgba(45,90,39,.1);color:var(--green);border:1px solid rgba(45,90,39,.3);font-family:'Oswald',sans-serif;font-size:11px;padding:2px 8px;font-weight:700;}
 </style>
 </head>
 <body>
 
-<div id="pwGate" style="display:flex;">
+<div id="pwGate">
   <div class="pw-box">
     <div class="pw-icon">🔒</div>
     <div class="pw-title">Commissioner Access</div>
-    <div class="pw-sub">Enter the password to access the admin panel</div>
+    <div class="pw-sub">Enter the password to continue</div>
     <input class="pw-input" type="password" id="pwInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPw()"/>
     <button class="pw-btn" onclick="checkPw()">Enter</button>
     <div class="pw-error" id="pwError">Incorrect password. Try again.</div>
   </div>
 </div>
 
-<div id="adminContent" style="display:none;">
+<div id="adminContent">
 
-<!-- Edit Modal -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <div class="modal-title">Edit Submission</div>
@@ -149,7 +129,7 @@ tr:hover td{background:var(--bg2);}
     <div class="mgrid">
       <div class="mfield"><label>Team</label>
         <select id="editTeam">
-          <option value="Baylor">Baylor Bears</option><option value="KState">Kansas State Wildcats</option>
+          <option value="Baylor">Baylor Bears</option><option value="KState">Kansas State</option>
           <option value="Memphis">Memphis Tigers</option><option value="Oregon">Oregon Ducks</option>
           <option value="AirForce">Air Force Falcons</option><option value="Auburn">Auburn Tigers</option>
           <option value="TexasAM">Texas A&M Aggies</option><option value="UCLA">UCLA Bruins</option>
@@ -211,253 +191,248 @@ tr:hover td{background:var(--bg2);}
 
 <div class="layout">
   <div class="sidebar">
-    <div class="sidebar-label">Filter By</div>
-    <div class="sidebar-item active" onclick="setFilter('all',this)">All <span class="badge gray" id="b_all">0</span></div>
-    <div class="sidebar-item" onclick="setFilter('pending',this)">Pending <span class="badge" id="b_pending">0</span></div>
-    <div class="sidebar-item" onclick="setFilter('approved',this)">Approved <span class="badge green" id="b_approved">0</span></div>
-    <div class="sidebar-item" onclick="setFilter('rejected',this)">Rejected <span class="badge gray" id="b_rejected">0</span></div>
-    <div class="sidebar-label" style="margin-top:20px;">Scores</div>
-    <div class="sidebar-item" onclick="setFilter('scores',this)">&#127944; Enter Scores</div>
-    <div class="sidebar-label" style="margin-top:8px;">Actions</div>
+    <div class="sidebar-label">View</div>
+    <div class="sidebar-item active" id="tab_submissions" onclick="showSection('submissions')">Submissions <span class="badge gray" id="b_all">0</span></div>
+    <div class="sidebar-item" id="tab_scores" onclick="showSection('scores')">Enter Scores</div>
+    <div class="sidebar-label" style="margin-top:20px;">Filter</div>
+    <div class="sidebar-item active" id="tab_all" onclick="setFilter('all')">All <span class="badge gray" id="b_all2">0</span></div>
+    <div class="sidebar-item" id="tab_pending" onclick="setFilter('pending')">Pending <span class="badge" id="b_pending">0</span></div>
+    <div class="sidebar-item" id="tab_approved" onclick="setFilter('approved')">Approved <span class="badge green" id="b_approved">0</span></div>
+    <div class="sidebar-item" id="tab_rejected" onclick="setFilter('rejected')">Rejected <span class="badge gray" id="b_rejected">0</span></div>
+    <div class="sidebar-label" style="margin-top:20px;">Actions</div>
     <div class="sidebar-item" onclick="approveAll()">&#10003; Approve All</div>
     <div class="sidebar-item" onclick="clearRejected()">&#10005; Clear Rejected</div>
     <div class="sidebar-item" onclick="exportData()">&#8595; Export JSON</div>
   </div>
   <div class="main">
-    <div class="main-title" id="mainTitle">All Submissions</div>
-    <div class="main-sub">Review and manage player stat submissions</div>
-    <div class="summary-grid">
-      <div class="summary-card"><div class="summary-num gold" id="s_total">0</div><div class="summary-label">Total</div></div>
-      <div class="summary-card"><div class="summary-num blue" id="s_pending">0</div><div class="summary-label">Pending</div></div>
-      <div class="summary-card"><div class="summary-num green" id="s_approved">0</div><div class="summary-label">Approved</div></div>
-      <div class="summary-card"><div class="summary-num red" id="s_rejected">0</div><div class="summary-label">Rejected</div></div>
+    <div class="main-title" id="mainTitle">Submissions</div>
+    <div class="main-sub" id="mainSub">Review and manage player stat submissions</div>
+    <div id="summarySection">
+      <div class="summary-grid">
+        <div class="summary-card"><div class="summary-num gold" id="s_total">0</div><div class="summary-label">Total</div></div>
+        <div class="summary-card"><div class="summary-num blue" id="s_pending">0</div><div class="summary-label">Pending</div></div>
+        <div class="summary-card"><div class="summary-num green" id="s_approved">0</div><div class="summary-label">Approved</div></div>
+        <div class="summary-card"><div class="summary-num red" id="s_rejected">0</div><div class="summary-label">Rejected</div></div>
+      </div>
     </div>
-    <div class="filter-bar">
-      <input class="filter-input" type="text" placeholder="Search player or team..." id="searchInput" oninput="renderTable()"/>
-      <select class="filter-select" id="weekSel" onchange="renderTable()">
-        <option value="">All Weeks</option>
-        <option value="1">Week 1</option><option value="2">Week 2</option><option value="3">Week 3</option>
-        <option value="4">Week 4</option><option value="5">Week 5</option><option value="6">Week 6</option>
-        <option value="7">Week 7</option><option value="8">Week 8</option><option value="9">Week 9</option>
-        <option value="10">Week 10</option><option value="11">Week 11</option><option value="12">Week 12</option>
-      </select>
-      <select class="filter-select" id="teamSel" onchange="renderTable()">
-        <option value="">All Teams</option>
-        <option value="Baylor">Baylor</option><option value="KState">Kansas State</option>
-        <option value="Memphis">Memphis</option><option value="Oregon">Oregon</option>
-        <option value="AirForce">Air Force</option><option value="Auburn">Auburn</option>
-        <option value="TexasAM">Texas A&M</option><option value="UCLA">UCLA</option>
-      </select>
+    <div id="submissionsSection">
+      <div class="filter-bar">
+        <input class="filter-input" type="text" placeholder="Search player or team..." id="searchInput" oninput="renderTable()"/>
+        <select class="filter-select" id="weekSel" onchange="renderTable()">
+          <option value="">All Weeks</option>
+          <option value="1">Week 1</option><option value="2">Week 2</option><option value="3">Week 3</option>
+          <option value="4">Week 4</option><option value="5">Week 5</option><option value="6">Week 6</option>
+          <option value="7">Week 7</option><option value="8">Week 8</option><option value="9">Week 9</option>
+          <option value="10">Week 10</option><option value="11">Week 11</option><option value="12">Week 12</option>
+        </select>
+        <select class="filter-select" id="teamSel" onchange="renderTable()">
+          <option value="">All Teams</option>
+          <option value="Baylor">Baylor</option><option value="KState">Kansas State</option>
+          <option value="Memphis">Memphis</option><option value="Oregon">Oregon</option>
+          <option value="AirForce">Air Force</option><option value="Auburn">Auburn</option>
+          <option value="TexasAM">Texas A&M</option><option value="UCLA">UCLA</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Player / Game</th><th>Stats</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
     </div>
-    <div id="content"></div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Player / Game</th><th>Stats</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="tbody"></tbody>
-      </table>
+    <div id="scoresSection" style="display:none;">
+      <div id="scoresContainer"></div>
     </div>
   </div>
 </div>
-
 </div>
 
 <script>
-const TEAM_NAMES={Baylor:"Baylor Bears",KState:"Kansas State Wildcats",Memphis:"Memphis Tigers",Oregon:"Oregon Ducks",AirForce:"Air Force Falcons",Auburn:"Auburn Tigers",TexasAM:"Texas A&M Aggies",UCLA:"UCLA Bruins"};
+var STATS_KEY = 'cefl_s16_stats';
+var SCORES_KEY = 'cefl_s16_scores';
+var currentFilter = 'all';
+var currentSection = 'submissions';
+var TEAM_NAMES = {Baylor:"Baylor Bears",KState:"Kansas State",Memphis:"Memphis Tigers",Oregon:"Oregon Ducks",AirForce:"Air Force Falcons",Auburn:"Auburn Tigers",TexasAM:"Texas A&M Aggies",UCLA:"UCLA Bruins"};
 
-const SCHEDULE=[
-  {week:1,games:[{home:"Baylor",away:"Oregon",type:"conference"},{home:"Memphis",away:"UCLA",type:"inter"},{home:"AirForce",away:"KState",type:"inter"},{home:"Auburn",away:"TexasAM",type:"conference"}]},
-  {week:2,games:[{home:"Auburn",away:"UCLA",type:"conference"},{home:"Oregon",away:"KState",type:"conference"},{home:"TexasAM",away:"Memphis",type:"inter"},{home:"Baylor",away:"AirForce",type:"inter"}]},
-  {week:3,games:[{home:"Oregon",away:"UCLA",type:"inter"},{home:"Baylor",away:"Auburn",type:"inter"},{home:"AirForce",away:"TexasAM",type:"conference"},{home:"KState",away:"Memphis",type:"conference"}]},
-  {week:4,games:[{home:"TexasAM",away:"UCLA",type:"conference"},{home:"Oregon",away:"Memphis",type:"conference"},{home:"AirForce",away:"Auburn",type:"conference"},{home:"Baylor",away:"KState",type:"conference"}]},
-  {week:5,games:[{home:"UCLA",away:"Memphis",type:"inter"},{home:"Baylor",away:"TexasAM",type:"inter"},{home:"KState",away:"Oregon",type:"conference"},{home:"Auburn",away:"AirForce",type:"conference"}]},
-  {week:6,games:[{home:"Auburn",away:"KState",type:"inter"},{home:"Oregon",away:"AirForce",type:"inter"},{home:"Memphis",away:"Baylor",type:"conference"},{home:"UCLA",away:"TexasAM",type:"conference"}]},
-  {week:7,games:[{home:"Oregon",away:"Baylor",type:"conference"},{home:"TexasAM",away:"Auburn",type:"conference"},{home:"KState",away:"UCLA",type:"inter"},{home:"Memphis",away:"AirForce",type:"inter"}]},
-  {week:8,games:[{home:"KState",away:"Baylor",type:"conference"},{home:"Memphis",away:"Auburn",type:"inter"},{home:"UCLA",away:"AirForce",type:"conference"},{home:"Oregon",away:"TexasAM",type:"inter"}]},
-  {week:9,games:[{home:"AirForce",away:"Baylor",type:"inter"},{home:"Memphis",away:"TexasAM",type:"inter"},{home:"UCLA",away:"Oregon",type:"inter"},{home:"KState",away:"Auburn",type:"inter"}]},
-  {week:10,games:[{home:"Baylor",away:"Memphis",type:"conference"},{home:"KState",away:"AirForce",type:"inter"},{home:"UCLA",away:"Auburn",type:"conference"},{home:"TexasAM",away:"Oregon",type:"inter"}]},
-  {week:11,games:[{home:"Memphis",away:"Oregon",type:"conference"},{home:"AirForce",away:"UCLA",type:"conference"},{home:"KState",away:"TexasAM",type:"inter"},{home:"Auburn",away:"Baylor",type:"inter"}]},
-  {week:12,games:[{home:"Baylor",away:"UCLA",type:"inter"},{home:"TexasAM",away:"AirForce",type:"conference"},{home:"Oregon",away:"Auburn",type:"inter"},{home:"Memphis",away:"KState",type:"conference"}]},
+var SCHEDULE = [
+  {week:1,games:[{home:"Baylor",away:"Oregon"},{home:"Memphis",away:"UCLA"},{home:"AirForce",away:"KState"},{home:"Auburn",away:"TexasAM"}]},
+  {week:2,games:[{home:"Auburn",away:"UCLA"},{home:"Oregon",away:"KState"},{home:"TexasAM",away:"Memphis"},{home:"Baylor",away:"AirForce"}]},
+  {week:3,games:[{home:"Oregon",away:"UCLA"},{home:"Baylor",away:"Auburn"},{home:"AirForce",away:"TexasAM"},{home:"KState",away:"Memphis"}]},
+  {week:4,games:[{home:"TexasAM",away:"UCLA"},{home:"Oregon",away:"Memphis"},{home:"AirForce",away:"Auburn"},{home:"Baylor",away:"KState"}]},
+  {week:5,games:[{home:"UCLA",away:"Memphis"},{home:"Baylor",away:"TexasAM"},{home:"KState",away:"Oregon"},{home:"Auburn",away:"AirForce"}]},
+  {week:6,games:[{home:"Auburn",away:"KState"},{home:"Oregon",away:"AirForce"},{home:"Memphis",away:"Baylor"},{home:"UCLA",away:"TexasAM"}]},
+  {week:7,games:[{home:"Oregon",away:"Baylor"},{home:"TexasAM",away:"Auburn"},{home:"KState",away:"UCLA"},{home:"Memphis",away:"AirForce"}]},
+  {week:8,games:[{home:"KState",away:"Baylor"},{home:"Memphis",away:"Auburn"},{home:"UCLA",away:"AirForce"},{home:"Oregon",away:"TexasAM"}]},
+  {week:9,games:[{home:"AirForce",away:"Baylor"},{home:"Memphis",away:"TexasAM"},{home:"UCLA",away:"Oregon"},{home:"KState",away:"Auburn"}]},
+  {week:10,games:[{home:"Baylor",away:"Memphis"},{home:"KState",away:"AirForce"},{home:"UCLA",away:"Auburn"},{home:"TexasAM",away:"Oregon"}]},
+  {week:11,games:[{home:"Memphis",away:"Oregon"},{home:"AirForce",away:"UCLA"},{home:"KState",away:"TexasAM"},{home:"Auburn",away:"Baylor"}]},
+  {week:12,games:[{home:"Baylor",away:"UCLA"},{home:"TexasAM",away:"AirForce"},{home:"Oregon",away:"Auburn"},{home:"Memphis",away:"KState"}]},
 ];
-const SCORES_KEY='cefl_s16_scores';
-const TEAM_NAMES={Baylor:"Baylor Bears",KState:"Kansas State",Memphis:"Memphis Tigers",Oregon:"Oregon Ducks",AirForce:"Air Force",Auburn:"Auburn Tigers",TexasAM:"Texas A&M",UCLA:"UCLA Bruins"};
+
+function getData(){try{return JSON.parse(localStorage.getItem(STATS_KEY)||'[]');}catch(e){return[];}}
+function saveData(d){localStorage.setItem(STATS_KEY,JSON.stringify(d));}
 function getScores(){try{return JSON.parse(localStorage.getItem(SCORES_KEY)||'{}');}catch(e){return{};}}
 function saveScores(s){localStorage.setItem(SCORES_KEY,JSON.stringify(s));}
 
-function renderScores(){
-  const scores=getScores();
-  let html='';
-  SCHEDULE.forEach(wk=>{
-    html+=`<div class="week-section"><div class="week-section-title">Week ${wk.week}</div><div class="scores-grid">`;
-    wk.games.forEach(g=>{
-      const key=`w${wk.week}_${[g.home,g.away].sort().join('_')}`;
-      const existing=scores[key]||{};
-      const typeLabel=g.type==='conference'?'Conference':'Inter-Conf';
-      html+=`<div class="score-card">
-        <div class="score-card-head">
-          <span class="score-card-week">Week ${wk.week}</span>
-          <span class="score-card-type">${typeLabel}</span>
-        </div>
-        <div class="score-card-body">
-          <div class="score-matchup">
-            <span class="score-team">${TEAM_NAMES[g.home]||g.home}</span>
-            <span class="score-vs">vs</span>
-            <span class="score-team away">${TEAM_NAMES[g.away]||g.away}</span>
-          </div>
-          <div class="score-inputs">
-            <input class="score-input" type="number" id="hs_${key}" placeholder="0" value="${existing.home||''}" min="0"/>
-            <span class="score-dash">—</span>
-            <input class="score-input" type="number" id="as_${key}" placeholder="0" value="${existing.away||''}" min="0"/>
-          </div>
-          <button class="score-save-btn" onclick="saveScore('${key}','${g.home}','${g.away}',${wk.week})">Save Score</button>
-          <div class="score-saved" id="saved_${key}">&#10003; Saved!</div>
-        </div>
-      </div>`;
-    });
-    html+=`</div></div>`;
-  });
-  document.getElementById('content').innerHTML=html;
-}
-
-function saveScore(key,home,away,week){
-  const hs=document.getElementById('hs_'+key).value;
-  const as=document.getElementById('as_'+key).value;
-  const scores=getScores();
-  scores[key]={home:hs,away:as};
-  const allStats=JSON.parse(localStorage.getItem('cefl_s16_stats')||'[]');
-  const filtered=allStats.filter(s=>!s.admin_score||(s.home!==home||s.away!==away||s.week!==week));
-  if(hs!=='') filtered.push({id:'admin_'+key+'_home',status:'approved',admin_score:true,player_name:home,team:home,week,home,away,score:hs,submitted:new Date().toISOString()});
-  if(as!=='') filtered.push({id:'admin_'+key+'_away',status:'approved',admin_score:true,player_name:away,team:away,week,home,away,score:as,submitted:new Date().toISOString()});
-  localStorage.setItem('cefl_s16_stats',JSON.stringify(filtered));
-  saveScores(scores);
-  const savedEl=document.getElementById('saved_'+key);
-  savedEl.style.display='block';
-  setTimeout(()=>{savedEl.style.display='none';},2000);
-}
-
-const SK='cefl_s16_stats';
-let currentFilter='all';
-function getData(){try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch(e){return[];}}
-function saveData(d){localStorage.setItem(SK,JSON.stringify(d));}
-
-function checkPw(){
-  if(document.getElementById('pwInput').value==='CEFL231'){
-    document.getElementById('pwGate').style.display='none';
-    document.getElementById('adminContent').style.display='block';
-    sessionStorage.setItem('cefl_admin','1');
-  } else {
-    document.getElementById('pwError').style.display='block';
-    document.getElementById('pwInput').value='';
-  }
-}
-if(sessionStorage.getItem('cefl_admin')==='1'){
-  document.getElementById('pwGate').style.display='none';
-  document.getElementById('adminContent').style.display='block';
-}
-
-function setFilter(f,el){
-  currentFilter=f;
-  document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
-  el.classList.add('active');
-  const t={all:'All Submissions',pending:'Pending Review',approved:'Approved',rejected:'Rejected',scores:'Enter Scores'};
-  document.getElementById('mainTitle').textContent=t[f];
-  if(f==='scores') renderScores();
+function showSection(s){
+  currentSection=s;
+  document.getElementById('submissionsSection').style.display=s==='submissions'?'':'none';
+  document.getElementById('scoresSection').style.display=s==='scores'?'':'none';
+  document.getElementById('summarySection').style.display=s==='submissions'?'':'none';
+  document.getElementById('tab_submissions').classList.toggle('active',s==='submissions');
+  document.getElementById('tab_scores').classList.toggle('active',s==='scores');
+  document.getElementById('mainTitle').textContent=s==='scores'?'Enter Scores':'Submissions';
+  document.getElementById('mainSub').textContent=s==='scores'?'Enter final scores — they show up live on the schedule':'Review and manage player stat submissions';
+  if(s==='scores') renderScores();
   else renderTable();
 }
+
+function setFilter(f){
+  currentFilter=f;
+  ['all','pending','approved','rejected'].forEach(function(x){
+    document.getElementById('tab_'+x).classList.toggle('active',x===f);
+  });
+  renderTable();
+}
+
 function updateSummary(){
-  const d=getData();
-  const p=d.filter(x=>x.status==='pending').length;
-  const a=d.filter(x=>x.status==='approved').length;
-  const r=d.filter(x=>x.status==='rejected').length;
+  var d=getData();
+  var p=d.filter(function(x){return x.status==='pending';}).length;
+  var a=d.filter(function(x){return x.status==='approved';}).length;
+  var r=d.filter(function(x){return x.status==='rejected';}).length;
   document.getElementById('s_total').textContent=d.length;
   document.getElementById('s_pending').textContent=p;
   document.getElementById('s_approved').textContent=a;
   document.getElementById('s_rejected').textContent=r;
   document.getElementById('b_all').textContent=d.length;
+  document.getElementById('b_all2').textContent=d.length;
   document.getElementById('b_pending').textContent=p;
   document.getElementById('b_approved').textContent=a;
   document.getElementById('b_rejected').textContent=r;
 }
+
 function renderTable(){
-  const data=getData();
-  const search=document.getElementById('searchInput').value.toLowerCase();
-  const weekF=document.getElementById('weekSel').value;
-  const teamF=document.getElementById('teamSel').value;
-  let filtered=data.filter(s=>{
+  var data=getData();
+  var search=document.getElementById('searchInput').value.toLowerCase();
+  var weekF=document.getElementById('weekSel').value;
+  var teamF=document.getElementById('teamSel').value;
+  var filtered=data.filter(function(s){
     if(currentFilter!=='all'&&s.status!==currentFilter) return false;
     if(weekF&&String(s.week)!==weekF) return false;
     if(teamF&&s.team!==teamF) return false;
-    if(search&&!s.player_name?.toLowerCase().includes(search)&&!s.team?.toLowerCase().includes(search)) return false;
+    if(search&&!(s.player_name||'').toLowerCase().includes(search)&&!(s.team||'').toLowerCase().includes(search)) return false;
     return true;
-  }).sort((a,b)=>new Date(b.submitted)-new Date(a.submitted));
-  const tbody=document.getElementById('tbody');
-  if(!filtered.length){tbody.innerHTML=`<tr><td colspan="4"><div class="empty">No submissions found.</div></td></tr>`;updateSummary();return;}
-  tbody.innerHTML=filtered.map(s=>{
-    const date=new Date(s.submitted).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-    const chips=[
-      s.pass_tds?`Pass TDs: <strong>${s.pass_tds}</strong>`:'',
-      s.rush_tds?`Rush TDs: <strong>${s.rush_tds}</strong>`:'',
-      s.rec_tds?`Rec TDs: <strong>${s.rec_tds}</strong>`:'',
-      s.pass_att?`Att: <strong>${s.pass_comp||0}/${s.pass_att}</strong>`:'',
-      s.tackles?`Tkl: <strong>${s.tackles}</strong>`:'',
-      s.ints_caught?`INTs: <strong>${s.ints_caught}</strong>`:'',
-      s.swats?`Swats: <strong>${s.swats}</strong>`:'',
-    ].filter(Boolean).map(c=>`<span class="stat-chip">${c}</span>`).join('');
-    return `<tr>
-      <td><div class="player-name">${s.player_name||'Unknown'}</div><div class="player-meta">${TEAM_NAMES[s.team]||s.team} &middot; Wk ${s.week} &middot; ${TEAM_NAMES[s.home]||s.home} vs ${TEAM_NAMES[s.away]||s.away}</div><div class="player-meta">${date}</div></td>
-      <td>${chips||'<span class="stat-chip">No stats</span>'}</td>
-      <td><span class="status-badge ${s.status}">${s.status.charAt(0).toUpperCase()+s.status.slice(1)}</span></td>
-      <td><div class="action-row">
-        ${s.status!=='approved'?`<button class="action-btn approve" onclick="updateStatus('${s.id}','approved')">&#10003; Approve</button>`:''}
-        ${s.status!=='rejected'?`<button class="action-btn reject" onclick="updateStatus('${s.id}','rejected')">&#10005; Reject</button>`:''}
-        <button class="action-btn edit" onclick="openEdit('${s.id}')">&#9998; Edit</button>
-        <button class="action-btn del" onclick="delEntry('${s.id}')">&#128465;</button>
-      </div></td>
-    </tr>`;
+  }).sort(function(a,b){return new Date(b.submitted)-new Date(a.submitted);});
+  var tbody=document.getElementById('tbody');
+  if(!filtered.length){tbody.innerHTML='<tr><td colspan="4"><div class="empty">No submissions found</div></td></tr>';updateSummary();return;}
+  tbody.innerHTML=filtered.map(function(s){
+    var date=new Date(s.submitted).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    var chips=[
+      s.pass_tds?'Pass TDs: <strong>'+s.pass_tds+'</strong>':'',
+      s.rush_tds?'Rush TDs: <strong>'+s.rush_tds+'</strong>':'',
+      s.rec_tds?'Rec TDs: <strong>'+s.rec_tds+'</strong>':'',
+      s.tackles?'Tkl: <strong>'+s.tackles+'</strong>':'',
+      s.ints_caught?'INTs: <strong>'+s.ints_caught+'</strong>':'',
+    ].filter(Boolean).map(function(c){return '<span class="stat-chip">'+c+'</span>';}).join('');
+    var tn=TEAM_NAMES[s.team]||s.team;
+    var hn=TEAM_NAMES[s.home]||s.home;
+    var an=TEAM_NAMES[s.away]||s.away;
+    return '<tr><td><div class="player-name">'+(s.player_name||'Unknown')+'</div><div class="player-meta">'+tn+' &middot; Wk '+s.week+' &middot; '+hn+' vs '+an+'</div><div class="player-meta">'+date+'</div></td>'
+      +'<td>'+(chips||'<span class="stat-chip">No stats</span>')+'</td>'
+      +'<td><span class="status-badge '+s.status+'">'+s.status.charAt(0).toUpperCase()+s.status.slice(1)+'</span></td>'
+      +'<td><div class="action-row">'
+      +(s.status!=='approved'?'<button class="action-btn approve" onclick="updateStatus(\''+s.id+'\',\'approved\')">&#10003; Approve</button>':'')
+      +(s.status!=='rejected'?'<button class="action-btn reject" onclick="updateStatus(\''+s.id+'\',\'rejected\')">&#10005; Reject</button>':'')
+      +'<button class="action-btn edit" onclick="openEdit(\''+s.id+'\')">&#9998; Edit</button>'
+      +'<button class="action-btn del" onclick="delEntry(\''+s.id+'\')">&#128465;</button>'
+      +'</div></td></tr>';
   }).join('');
   updateSummary();
 }
+
+function renderScores(){
+  var scores=getScores();
+  var html='<div style="display:grid;gap:24px;">';
+  SCHEDULE.forEach(function(wk){
+    html+='<div><div class="score-week-title">Week '+wk.week+'</div>';
+    wk.games.forEach(function(g){
+      var key='w'+wk.week+'_'+[g.home,g.away].sort().join('_');
+      var sc=scores[key]||{home:'',away:''};
+      var saved=sc.home!==''&&sc.away!==''?'<span class="score-saved">SAVED</span>':'';
+      html+='<div class="score-game-row">'
+        +'<div class="score-game-label">'+(TEAM_NAMES[g.home]||g.home)+' vs '+(TEAM_NAMES[g.away]||g.away)+'</div>'
+        +'<div class="score-inputs">'
+        +'<span class="score-team-label">'+(TEAM_NAMES[g.home]||g.home)+'</span>'
+        +'<input class="score-input" type="number" min="0" value="'+sc.home+'" placeholder="0" onchange="saveScore(\''+key+'\',\'home\',this.value)"/>'
+        +'<span style="color:var(--muted);font-weight:700;">—</span>'
+        +'<input class="score-input" type="number" min="0" value="'+sc.away+'" placeholder="0" onchange="saveScore(\''+key+'\',\'away\',this.value)"/>'
+        +'<span class="score-team-label">'+(TEAM_NAMES[g.away]||g.away)+'</span>'
+        +'</div>'+saved+'</div>';
+    });
+    html+='</div>';
+  });
+  html+='</div>';
+  document.getElementById('scoresContainer').innerHTML=html;
+}
+
+function saveScore(key,side,value){
+  var scores=getScores();
+  if(!scores[key]) scores[key]={home:'',away:''};
+  scores[key][side]=value;
+  saveScores(scores);
+}
+
 function updateStatus(id,status){
-  const d=getData(),i=d.findIndex(s=>s.id===id);
+  var d=getData(),i=d.findIndex(function(s){return s.id===id;});
   if(i>-1){d[i].status=status;saveData(d);renderTable();}
 }
 function delEntry(id){
   if(!confirm('Delete this submission?')) return;
-  saveData(getData().filter(s=>s.id!==id));renderTable();
+  saveData(getData().filter(function(s){return s.id!==id;}));renderTable();
 }
 function approveAll(){
-  const d=getData();d.forEach(s=>{if(s.status==='pending')s.status='approved';});saveData(d);renderTable();
+  var d=getData();d.forEach(function(s){if(s.status==='pending')s.status='approved';});saveData(d);renderTable();
 }
 function clearRejected(){
   if(!confirm('Delete all rejected?')) return;
-  saveData(getData().filter(s=>s.status!=='rejected'));renderTable();
+  saveData(getData().filter(function(s){return s.status!=='rejected';}));renderTable();
 }
 function exportData(){
-  const b=new Blob([JSON.stringify(getData(),null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='cefl_s16_stats.json';a.click();
+  var b=new Blob([JSON.stringify(getData(),null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='cefl_s16_stats.json';a.click();
 }
 function openEdit(id){
-  const s=getData().find(x=>x.id===id);if(!s) return;
+  var s=getData().find(function(x){return x.id===id;});if(!s) return;
   document.getElementById('editId').value=id;
   document.getElementById('editName').value=s.player_name||'';
   document.getElementById('editTeam').value=s.team||'Baylor';
   document.getElementById('editWeek').value=s.week||1;
   document.getElementById('editStatus').value=s.status||'pending';
-  ['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats'].forEach(f=>{document.getElementById('e_'+f).value=s[f]??0;});
+  ['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats'].forEach(function(f){document.getElementById('e_'+f).value=s[f]||0;});
   document.getElementById('editModal').classList.add('open');
 }
 function closeModal(){document.getElementById('editModal').classList.remove('open');}
 function saveEdit(){
-  const id=document.getElementById('editId').value;
-  const d=getData(),i=d.findIndex(s=>s.id===id);if(i<0) return;
+  var id=document.getElementById('editId').value;
+  var d=getData(),i=d.findIndex(function(s){return s.id===id;});if(i<0) return;
   d[i].player_name=document.getElementById('editName').value;
   d[i].team=document.getElementById('editTeam').value;
   d[i].week=parseInt(document.getElementById('editWeek').value);
   d[i].status=document.getElementById('editStatus').value;
-  ['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats'].forEach(f=>{d[i][f]=parseInt(document.getElementById('e_'+f).value)||0;});
+  ['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats'].forEach(function(f){d[i][f]=parseInt(document.getElementById('e_'+f).value)||0;});
   saveData(d);closeModal();renderTable();
 }
 document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
-renderTable();updateSummary();
+
+try{
+  if(sessionStorage.getItem('cefl_admin')==='1'){
+    document.getElementById('pwGate').style.display='none';
+    document.getElementById('adminContent').style.display='block';
+  }
+}catch(e){}
+
+renderTable();
+updateSummary();
 </script>
 </body>
 </html>
