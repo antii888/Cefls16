@@ -269,6 +269,7 @@ const WEEK_DATES=["June 4 - June 6","June 7 - June 9","June 10 - June 12","June 
 const SK='cefl_s16_stats';
 function getData(){try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch(e){return[];}}
 function getApproved(){return getData().filter(s=>s.status==='approved');}
+function getScores(){try{return JSON.parse(localStorage.getItem('cefl_s16_scores')||'{}');}catch(e){return{};}}
 
 function buildStandings(){
   const stats=getApproved();
@@ -348,8 +349,11 @@ function buildSchedule(){
       const gStats=statMap[key]||[];
       const homeStat=gStats.filter(s=>s.team===g.home).slice(-1)[0];
       const awayStat=gStats.filter(s=>s.team===g.away).slice(-1)[0];
-      const hs=homeStat?.score??null,as=awayStat?.score??null;
-      const hasScore=hs!==null&&as!==null;
+      const allScores=getScores();
+      const adminScore=allScores[key]||{};
+      const hs=adminScore.home!==undefined&&adminScore.home!==''?adminScore.home:(homeStat?.score??null);
+      const as=adminScore.away!==undefined&&adminScore.away!==''?adminScore.away:(awayStat?.score??null);
+      const hasScore=hs!==null&&as!==null&&hs!==''&&as!=='';
       const homeWin=hasScore&&parseInt(hs)>parseInt(as);
       const awayWin=hasScore&&parseInt(as)>parseInt(hs);
       const hc=(TEAMS[g.home]?.conf||'PIP').toLowerCase();
