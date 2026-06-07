@@ -74,10 +74,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Source Serif 4',serif;mi
           </select>
         </div>
         <div class="field"><label>Week</label>
-          <select id="gameWeek" onchange="updateGameOptions()">
-            <option value="">Select...</option>
-            ${Array.from({length:12},(_,i)=>`<option value="${i+1}">Week ${i+1}</option>`).join('')}
-          </select>
+          <select id="gameWeek" onchange="updateGameOptions()"><option value="">Select...</option></select>
         </div>
       </div>
       <div class="field"><label>Game</label>
@@ -139,6 +136,17 @@ const SCHEDULE=[
   {week:11,games:[{home:"Memphis",away:"Oregon"},{home:"AirForce",away:"UCLA"},{home:"KState",away:"TexasAM"},{home:"Auburn",away:"Baylor"}]},
   {week:12,games:[{home:"Baylor",away:"UCLA"},{home:"TexasAM",away:"AirForce"},{home:"Oregon",away:"Auburn"},{home:"Memphis",away:"KState"}]},
 ];
+
+window.addEventListener('DOMContentLoaded', function() {
+  var weekSel = document.getElementById('gameWeek');
+  for (var i = 1; i <= 12; i++) {
+    var opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = 'Week ' + i;
+    weekSel.appendChild(opt);
+  }
+});
+
 function updateGameOptions(){
   const team=document.getElementById('playerTeam').value;
   const week=parseInt(document.getElementById('gameWeek').value);
@@ -174,7 +182,7 @@ function submitStats(){
   let game;try{game=JSON.parse(gameRaw);}catch(e){alert('Please select a valid game.');return;}
   const fields=['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats'];
   const entry={id:Date.now()+'_'+Math.random().toString(36).slice(2),status:'pending',submitted:new Date().toISOString(),player_name:name,team,week:parseInt(week),home:game.home,away:game.away};
-  fields.forEach(f=>{entry[f]=parseInt(document.getElementById(f).value)||0;});
+  fields.forEach(f=>{var v=document.getElementById(f).value; entry[f]=v===''?0:parseInt(v)||0;});
   const all=JSON.parse(localStorage.getItem('cefl_s16_stats')||'[]');
   all.push(entry);
   localStorage.setItem('cefl_s16_stats',JSON.stringify(all));
