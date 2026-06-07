@@ -87,6 +87,26 @@ tr:hover td{background:var(--bg2);}
 .action-btn.del{background:transparent;color:var(--muted);border:1px solid var(--border);}
 .empty{text-align:center;padding:48px;color:var(--muted);font-size:13px;font-style:italic;letter-spacing:1px;}
 
+/* SCORES */
+.scores-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.score-card{background:var(--paper);border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);}
+.score-card-head{background:var(--ink);padding:8px 14px;display:flex;justify-content:space-between;align-items:center;}
+.score-card-week{font-family:'Playfair Display',serif;font-size:14px;font-weight:900;color:var(--bg);}
+.score-card-type{font-size:10px;letter-spacing:2px;color:rgba(245,240,232,.5);text-transform:uppercase;}
+.score-card-body{padding:14px;}
+.score-matchup{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.score-team{flex:1;font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;}
+.score-team.away{text-align:right;}
+.score-vs{font-size:11px;color:var(--muted);}
+.score-inputs{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.score-input{flex:1;background:var(--bg);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;padding:7px;text-align:center;outline:none;width:100%;}
+.score-input:focus{border-color:var(--red);}
+.score-dash{font-size:18px;color:var(--muted);}
+.score-save-btn{width:100%;background:var(--ink);color:var(--bg);font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:9px;border:none;cursor:pointer;}
+.score-save-btn:hover{background:var(--red);}
+.score-saved{font-size:11px;color:var(--green);text-align:center;margin-top:6px;display:none;font-style:italic;}
+.week-section{margin-bottom:24px;}
+.week-section-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--ink);}
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(26,18,8,.7);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
@@ -196,7 +216,9 @@ tr:hover td{background:var(--bg2);}
     <div class="sidebar-item" onclick="setFilter('pending',this)">Pending <span class="badge" id="b_pending">0</span></div>
     <div class="sidebar-item" onclick="setFilter('approved',this)">Approved <span class="badge green" id="b_approved">0</span></div>
     <div class="sidebar-item" onclick="setFilter('rejected',this)">Rejected <span class="badge gray" id="b_rejected">0</span></div>
-    <div class="sidebar-label" style="margin-top:20px;">Actions</div>
+    <div class="sidebar-label" style="margin-top:20px;">Scores</div>
+    <div class="sidebar-item" onclick="setFilter('scores',this)">&#127944; Enter Scores</div>
+    <div class="sidebar-label" style="margin-top:8px;">Actions</div>
     <div class="sidebar-item" onclick="approveAll()">&#10003; Approve All</div>
     <div class="sidebar-item" onclick="clearRejected()">&#10005; Clear Rejected</div>
     <div class="sidebar-item" onclick="exportData()">&#8595; Export JSON</div>
@@ -227,6 +249,7 @@ tr:hover td{background:var(--bg2);}
         <option value="TexasAM">Texas A&M</option><option value="UCLA">UCLA</option>
       </select>
     </div>
+    <div id="content"></div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Player / Game</th><th>Stats</th><th>Status</th><th>Actions</th></tr></thead>
@@ -240,6 +263,77 @@ tr:hover td{background:var(--bg2);}
 
 <script>
 const TEAM_NAMES={Baylor:"Baylor Bears",KState:"Kansas State Wildcats",Memphis:"Memphis Tigers",Oregon:"Oregon Ducks",AirForce:"Air Force Falcons",Auburn:"Auburn Tigers",TexasAM:"Texas A&M Aggies",UCLA:"UCLA Bruins"};
+
+const SCHEDULE=[
+  {week:1,games:[{home:"Baylor",away:"Oregon",type:"conference"},{home:"Memphis",away:"UCLA",type:"inter"},{home:"AirForce",away:"KState",type:"inter"},{home:"Auburn",away:"TexasAM",type:"conference"}]},
+  {week:2,games:[{home:"Auburn",away:"UCLA",type:"conference"},{home:"Oregon",away:"KState",type:"conference"},{home:"TexasAM",away:"Memphis",type:"inter"},{home:"Baylor",away:"AirForce",type:"inter"}]},
+  {week:3,games:[{home:"Oregon",away:"UCLA",type:"inter"},{home:"Baylor",away:"Auburn",type:"inter"},{home:"AirForce",away:"TexasAM",type:"conference"},{home:"KState",away:"Memphis",type:"conference"}]},
+  {week:4,games:[{home:"TexasAM",away:"UCLA",type:"conference"},{home:"Oregon",away:"Memphis",type:"conference"},{home:"AirForce",away:"Auburn",type:"conference"},{home:"Baylor",away:"KState",type:"conference"}]},
+  {week:5,games:[{home:"UCLA",away:"Memphis",type:"inter"},{home:"Baylor",away:"TexasAM",type:"inter"},{home:"KState",away:"Oregon",type:"conference"},{home:"Auburn",away:"AirForce",type:"conference"}]},
+  {week:6,games:[{home:"Auburn",away:"KState",type:"inter"},{home:"Oregon",away:"AirForce",type:"inter"},{home:"Memphis",away:"Baylor",type:"conference"},{home:"UCLA",away:"TexasAM",type:"conference"}]},
+  {week:7,games:[{home:"Oregon",away:"Baylor",type:"conference"},{home:"TexasAM",away:"Auburn",type:"conference"},{home:"KState",away:"UCLA",type:"inter"},{home:"Memphis",away:"AirForce",type:"inter"}]},
+  {week:8,games:[{home:"KState",away:"Baylor",type:"conference"},{home:"Memphis",away:"Auburn",type:"inter"},{home:"UCLA",away:"AirForce",type:"conference"},{home:"Oregon",away:"TexasAM",type:"inter"}]},
+  {week:9,games:[{home:"AirForce",away:"Baylor",type:"inter"},{home:"Memphis",away:"TexasAM",type:"inter"},{home:"UCLA",away:"Oregon",type:"inter"},{home:"KState",away:"Auburn",type:"inter"}]},
+  {week:10,games:[{home:"Baylor",away:"Memphis",type:"conference"},{home:"KState",away:"AirForce",type:"inter"},{home:"UCLA",away:"Auburn",type:"conference"},{home:"TexasAM",away:"Oregon",type:"inter"}]},
+  {week:11,games:[{home:"Memphis",away:"Oregon",type:"conference"},{home:"AirForce",away:"UCLA",type:"conference"},{home:"KState",away:"TexasAM",type:"inter"},{home:"Auburn",away:"Baylor",type:"inter"}]},
+  {week:12,games:[{home:"Baylor",away:"UCLA",type:"inter"},{home:"TexasAM",away:"AirForce",type:"conference"},{home:"Oregon",away:"Auburn",type:"inter"},{home:"Memphis",away:"KState",type:"conference"}]},
+];
+const SCORES_KEY='cefl_s16_scores';
+const TEAM_NAMES={Baylor:"Baylor Bears",KState:"Kansas State",Memphis:"Memphis Tigers",Oregon:"Oregon Ducks",AirForce:"Air Force",Auburn:"Auburn Tigers",TexasAM:"Texas A&M",UCLA:"UCLA Bruins"};
+function getScores(){try{return JSON.parse(localStorage.getItem(SCORES_KEY)||'{}');}catch(e){return{};}}
+function saveScores(s){localStorage.setItem(SCORES_KEY,JSON.stringify(s));}
+
+function renderScores(){
+  const scores=getScores();
+  let html='';
+  SCHEDULE.forEach(wk=>{
+    html+=`<div class="week-section"><div class="week-section-title">Week ${wk.week}</div><div class="scores-grid">`;
+    wk.games.forEach(g=>{
+      const key=`w${wk.week}_${[g.home,g.away].sort().join('_')}`;
+      const existing=scores[key]||{};
+      const typeLabel=g.type==='conference'?'Conference':'Inter-Conf';
+      html+=`<div class="score-card">
+        <div class="score-card-head">
+          <span class="score-card-week">Week ${wk.week}</span>
+          <span class="score-card-type">${typeLabel}</span>
+        </div>
+        <div class="score-card-body">
+          <div class="score-matchup">
+            <span class="score-team">${TEAM_NAMES[g.home]||g.home}</span>
+            <span class="score-vs">vs</span>
+            <span class="score-team away">${TEAM_NAMES[g.away]||g.away}</span>
+          </div>
+          <div class="score-inputs">
+            <input class="score-input" type="number" id="hs_${key}" placeholder="0" value="${existing.home||''}" min="0"/>
+            <span class="score-dash">—</span>
+            <input class="score-input" type="number" id="as_${key}" placeholder="0" value="${existing.away||''}" min="0"/>
+          </div>
+          <button class="score-save-btn" onclick="saveScore('${key}','${g.home}','${g.away}',${wk.week})">Save Score</button>
+          <div class="score-saved" id="saved_${key}">&#10003; Saved!</div>
+        </div>
+      </div>`;
+    });
+    html+=`</div></div>`;
+  });
+  document.getElementById('content').innerHTML=html;
+}
+
+function saveScore(key,home,away,week){
+  const hs=document.getElementById('hs_'+key).value;
+  const as=document.getElementById('as_'+key).value;
+  const scores=getScores();
+  scores[key]={home:hs,away:as};
+  const allStats=JSON.parse(localStorage.getItem('cefl_s16_stats')||'[]');
+  const filtered=allStats.filter(s=>!s.admin_score||(s.home!==home||s.away!==away||s.week!==week));
+  if(hs!=='') filtered.push({id:'admin_'+key+'_home',status:'approved',admin_score:true,player_name:home,team:home,week,home,away,score:hs,submitted:new Date().toISOString()});
+  if(as!=='') filtered.push({id:'admin_'+key+'_away',status:'approved',admin_score:true,player_name:away,team:away,week,home,away,score:as,submitted:new Date().toISOString()});
+  localStorage.setItem('cefl_s16_stats',JSON.stringify(filtered));
+  saveScores(scores);
+  const savedEl=document.getElementById('saved_'+key);
+  savedEl.style.display='block';
+  setTimeout(()=>{savedEl.style.display='none';},2000);
+}
+
 const SK='cefl_s16_stats';
 let currentFilter='all';
 function getData(){try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch(e){return[];}}
@@ -264,9 +358,10 @@ function setFilter(f,el){
   currentFilter=f;
   document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');
-  const t={all:'All Submissions',pending:'Pending Review',approved:'Approved',rejected:'Rejected'};
+  const t={all:'All Submissions',pending:'Pending Review',approved:'Approved',rejected:'Rejected',scores:'Enter Scores'};
   document.getElementById('mainTitle').textContent=t[f];
-  renderTable();
+  if(f==='scores') renderScores();
+  else renderTable();
 }
 function updateSummary(){
   const d=getData();
