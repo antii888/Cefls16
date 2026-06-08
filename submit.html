@@ -108,10 +108,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Source Serif 4',serif;mi
           <div class="stat-input-row"><span class="stat-name">Tackles</span><input class="stat-num" type="number" id="tackles" value="0" min="0"/></div>
           <div class="stat-input-row"><span class="stat-name">INTs Caught</span><input class="stat-num" type="number" id="ints_caught" value="0" min="0"/></div>
           <div class="stat-input-row"><span class="stat-name">Swats</span><input class="stat-num" type="number" id="swats" value="0" min="0"/></div>
+          <div class="stat-input-row"><span class="stat-name">Safeties</span><input class="stat-num" type="number" id="safeties" value="0" min="0"/></div>
+          <div class="stat-input-row"><span class="stat-name">Def TDs</span><input class="stat-num" type="number" id="def_tds" value="0" min="0"/></div>
         </div>
       </div>
     </div>
-    <button class="submit-btn" onclick="submitStats()">Submit Stats →</button>
+    <button class="submit-btn" id="submitBtn" onclick="submitStats()">Submit Stats →</button>
   </div>
   <div class="success-card" id="successCard">
     <div class="success-icon">🏈</div>
@@ -173,21 +175,34 @@ function updateGameOptions(){
     info.innerHTML=`${TEAM_NAMES[g.home]} vs ${TEAM_NAMES[g.away]} — Week ${week}`;
   }
 }
-function submitStats(){
-  const name=document.getElementById('playerName').value.trim();
-  const team=document.getElementById('playerTeam').value;
-  const week=document.getElementById('gameWeek').value;
-  const gameRaw=document.getElementById('gameSelect').value;
+var BIN_ID='6a25d244da38895dfe9664c6';
+var API_KEY='$2a$10$zGVgXvyaRBjJ49E3mqZ0suasvEoos6HR82ZGhpnSByh7mtyuwpu7e';
+async function submitStats(){
+  var name=document.getElementById('playerName').value.trim();
+  var team=document.getElementById('playerTeam').value;
+  var week=document.getElementById('gameWeek').value;
+  var gameRaw=document.getElementById('gameSelect').value;
   if(!name||!team||!week||!gameRaw){alert('Please fill in all game info fields.');return;}
-  let game;try{game=JSON.parse(gameRaw);}catch(e){alert('Please select a valid game.');return;}
-  const fields=['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats'];
-  const entry={id:Date.now()+'_'+Math.random().toString(36).slice(2),status:'pending',submitted:new Date().toISOString(),player_name:name,team,week:parseInt(week),home:game.home,away:game.away};
-  fields.forEach(f=>{var v=document.getElementById(f).value; entry[f]=v===''?0:parseInt(v)||0;});
-  const all=JSON.parse(localStorage.getItem('cefl_s16_stats')||'[]');
-  all.push(entry);
-  localStorage.setItem('cefl_s16_stats',JSON.stringify(all));
-  document.getElementById('formWrap').style.display='none';
-  document.getElementById('successCard').style.display='block';
+  var game;try{game=JSON.parse(gameRaw);}catch(e){alert('Please select a valid game.');return;}
+  var btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.textContent='Submitting...';
+  var fields=['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats','safeties','def_tds'];
+  var entry={id:Date.now()+'_'+Math.random().toString(36).slice(2),league:'CEFL',status:'pending',submitted:new Date().toISOString(),player_name:name,team:team,week:parseInt(week),home:game.home,away:game.away};
+  fields.forEach(function(f){var el=document.getElementById(f);var v=el?el.value:'';entry[f]=v===''?0:parseInt(v)||0;});
+  try{
+    var getRes=await fetch('https://api.jsonbin.io/v3/b/'+BIN_ID+'/latest',{headers:{'X-Master-Key':API_KEY}});
+    var getData=await getRes.json();
+    var current=getData.record.stats||[];
+    current.push(entry);
+    var putRes=await fetch('https://api.jsonbin.io/v3/b/'+BIN_ID,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':API_KEY},body:JSON.stringify({stats:current})});
+    if(putRes.ok){
+      document.getElementById('formWrap').style.display='none';
+      document.getElementById('successCard').style.display='block';
+    } else { throw new Error('Save failed'); }
+  }catch(e){
+    alert('Something went wrong. Please try again.');
+    btn.disabled=false;btn.textContent='Submit Stats →';
+  }
 }
 function resetForm(){
   document.getElementById('formWrap').style.display='block';
@@ -196,7 +211,7 @@ function resetForm(){
   document.getElementById('playerTeam').value='';
   document.getElementById('gameWeek').value='';
   document.getElementById('gameSelect').innerHTML='<option value="">Select team & week first...</option>';
-  ['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats'].forEach(id=>{document.getElementById(id).value=0;});
+  ['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats','safeties','def_tds'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=0;});
 }
 </script>
 </body>
