@@ -266,10 +266,19 @@ const SCHEDULE=[
 ];
 
 const WEEK_DATES=["June 4 - June 6","June 7 - June 9","June 10 - June 12","June 13 - June 15","June 16 - June 18","June 19 - June 21","June 22 - June 24","June 25 - June 27","June 28 - June 30","July 1 - July 3","July 4 - July 6","July 7 - July 9"];
-const SK='cefl_s16_stats';
-function getData(){try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch(e){return[];}}
-function getApproved(){return getData().filter(s=>s.status==='approved');}
+var _BIN_ID='6a25d244da38895dfe9664c6';
+var _API_KEY='$2a$10$zGVgXvyaRBjJ49E3mqZ0suasvEoos6HR82ZGhpnSByh7mtyuwpu7e';
+var _cachedStats=[];
+function getApproved(){return _cachedStats.filter(function(s){return s.league==='CEFL'&&s.status==='approved';});}
 function getScores(){try{return JSON.parse(localStorage.getItem('cefl_s16_scores')||'{}');}catch(e){return{};}}
+async function fetchAndRender(){
+  try{
+    var res=await fetch('https://api.jsonbin.io/v3/b/'+_BIN_ID+'/latest',{headers:{'X-Master-Key':_API_KEY}});
+    var json=await res.json();
+    _cachedStats=json.record.stats||[];
+  }catch(e){_cachedStats=[];}
+  buildStandings();buildSchedule();
+}
 
 function buildStandings(){
   const stats=getApproved();
@@ -405,7 +414,7 @@ function buildSchedule(){
   });
   document.getElementById('scheduleContainer').innerHTML=html;
 }
-buildStandings();buildWeekFilters();buildSchedule();
+buildWeekFilters();fetchAndRender();
 </script>
 </body>
 </html>
