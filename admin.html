@@ -170,6 +170,8 @@ tr:hover td{background:var(--bg2);}
       <div class="mfield"><label>Tackles</label><input type="number" id="e_tackles" min="0"/></div>
       <div class="mfield"><label>INTs Caught</label><input type="number" id="e_ints_caught" min="0"/></div>
       <div class="mfield"><label>Swats</label><input type="number" id="e_swats" min="0"/></div>
+      <div class="mfield"><label>Safeties</label><input type="number" id="e_safeties" min="0"/></div>
+      <div class="mfield"><label>Def TDs</label><input type="number" id="e_def_tds" min="0"/></div>
     </div>
     <div class="modal-actions">
       <button class="mbtn cancel" onclick="closeModal()">Cancel</button>
@@ -248,10 +250,13 @@ tr:hover td{background:var(--bg2);}
 </div>
 
 <script>
-var STATS_KEY = 'cefl_s16_stats';
+var BIN_ID = '6a25d244da38895dfe9664c6';
+var API_KEY = '$2a$10$zGVgXvyaRBjJ49E3mqZ0suasvEoos6HR82ZGhpnSByh7mtyuwpu7e';
+var LEAGUE = 'CEFL';
 var SCORES_KEY = 'cefl_s16_scores';
 var currentFilter = 'all';
 var currentSection = 'submissions';
+var allData = [];
 var TEAM_NAMES = {Baylor:"Baylor Bears",KState:"Kansas State",Memphis:"Memphis Tigers",Oregon:"Oregon Ducks",AirForce:"Air Force Falcons",Auburn:"Auburn Tigers",TexasAM:"Texas A&M Aggies",UCLA:"UCLA Bruins"};
 
 var SCHEDULE = [
@@ -269,8 +274,24 @@ var SCHEDULE = [
   {week:12,games:[{home:"Baylor",away:"UCLA"},{home:"TexasAM",away:"AirForce"},{home:"Oregon",away:"Auburn"},{home:"Memphis",away:"KState"}]},
 ];
 
-function getData(){try{return JSON.parse(localStorage.getItem(STATS_KEY)||'[]');}catch(e){return[];}}
-function saveData(d){localStorage.setItem(STATS_KEY,JSON.stringify(d));}
+async function loadData(){
+  try{
+    var res=await fetch('https://api.jsonbin.io/v3/b/'+BIN_ID+'/latest',{headers:{'X-Master-Key':API_KEY}});
+    var json=await res.json();
+    var all=json.record.stats||[];
+    allData=all.filter(function(s){return s.league===LEAGUE;});
+    renderTable();updateSummary();
+  }catch(e){document.getElementById('tbody').innerHTML='<tr><td colspan="4"><div class="empty">Failed to load. Check connection.</div></td></tr>';}
+}
+async function saveBin(){
+  try{
+    var res=await fetch('https://api.jsonbin.io/v3/b/'+BIN_ID+'/latest',{headers:{'X-Master-Key':API_KEY}});
+    var json=await res.json();
+    var all=json.record.stats||[];
+    var others=all.filter(function(s){return s.league!==LEAGUE;});
+    await fetch('https://api.jsonbin.io/v3/b/'+BIN_ID,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':API_KEY},body:JSON.stringify({stats:others.concat(allData)})});
+  }catch(e){alert('Failed to save.');}
+}
 function getScores(){try{return JSON.parse(localStorage.getItem(SCORES_KEY)||'{}');}catch(e){return{};}}
 function saveScores(s){localStorage.setItem(SCORES_KEY,JSON.stringify(s));}
 
@@ -296,7 +317,7 @@ function setFilter(f){
 }
 
 function updateSummary(){
-  var d=getData();
+  var d=allData;
   var p=d.filter(function(x){return x.status==='pending';}).length;
   var a=d.filter(function(x){return x.status==='approved';}).length;
   var r=d.filter(function(x){return x.status==='rejected';}).length;
@@ -312,7 +333,7 @@ function updateSummary(){
 }
 
 function renderTable(){
-  var data=getData();
+  var data=allData;
   var search=document.getElementById('searchInput').value.toLowerCase();
   var weekF=document.getElementById('weekSel').value;
   var teamF=document.getElementById('teamSel').value;
@@ -382,9 +403,9 @@ function saveScore(key,side,value){
   saveScores(scores);
 }
 
-function updateStatus(id,status){
-  var d=getData(),i=d.findIndex(function(s){return s.id===id;});
-  if(i>-1){d[i].status=status;saveData(d);renderTable();}
+async function updateStatus(id,status){
+  var i=allData.findIndex(function(s){return s.id===id;});
+  if(i>-1){allData[i].status=status;await saveBin();renderTable();updateSummary();}
 }
 function delEntry(id){
   if(!confirm('Delete this submission?')) return;
@@ -398,11 +419,11 @@ function clearRejected(){
   saveData(getData().filter(function(s){return s.status!=='rejected';}));renderTable();
 }
 function exportData(){
-  var b=new Blob([JSON.stringify(getData(),null,2)],{type:'application/json'});
+  var b=new Blob([JSON.stringify(allData,null,2)],{type:'application/json'});
   var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='cefl_s16_stats.json';a.click();
 }
 function openEdit(id){
-  var s=getData().find(function(x){return x.id===id;});if(!s) return;
+  var s=allData.find(function(x){return x.id===id;});if(!s) return;
   document.getElementById('editId').value=id;
   document.getElementById('editName').value=s.player_name||'';
   document.getElementById('editTeam').value=s.team||'Baylor';
@@ -412,15 +433,15 @@ function openEdit(id){
   document.getElementById('editModal').classList.add('open');
 }
 function closeModal(){document.getElementById('editModal').classList.remove('open');}
-function saveEdit(){
+async function saveEdit(){
   var id=document.getElementById('editId').value;
-  var d=getData(),i=d.findIndex(function(s){return s.id===id;});if(i<0) return;
-  d[i].player_name=document.getElementById('editName').value;
-  d[i].team=document.getElementById('editTeam').value;
-  d[i].week=parseInt(document.getElementById('editWeek').value);
-  d[i].status=document.getElementById('editStatus').value;
-  ['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats'].forEach(function(f){d[i][f]=parseInt(document.getElementById('e_'+f).value)||0;});
-  saveData(d);closeModal();renderTable();
+  var i=allData.findIndex(function(s){return s.id===id;});if(i<0) return;
+  allData[i].player_name=document.getElementById('editName').value;
+  allData[i].team=document.getElementById('editTeam').value;
+  allData[i].week=parseInt(document.getElementById('editWeek').value);
+  allData[i].status=document.getElementById('editStatus').value;
+  ['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats','safeties','def_tds'].forEach(function(f){var el=document.getElementById('e_'+f);if(el)allData[i][f]=parseInt(el.value)||0;});
+  await saveBin();closeModal();renderTable();updateSummary();
 }
 document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
@@ -428,6 +449,7 @@ try{
   if(sessionStorage.getItem('cefl_admin')==='1'){
     document.getElementById('pwGate').style.display='none';
     document.getElementById('adminContent').style.display='block';
+    loadData();
   }
 }catch(e){}
 
