@@ -20,8 +20,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Source Serif 4',serif;mi
 .section-label{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 .field{margin-bottom:16px;}
 .field label{display:block;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-.field input,.field select{width:100%;background:var(--bg);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:14px;padding:10px 14px;outline:none;transition:border-color .15s;}
-.field input:focus,.field select:focus{border-color:var(--red);outline:2px solid rgba(192,57,43,.2);}
+.field input,.field select{width:100%;background:var(--bg);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:14px;padding:10px 14px;outline:none;}
+.field input:focus,.field select:focus{border-color:var(--red);}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .stat-group{background:var(--bg2);border:1px solid var(--border);padding:14px;}
@@ -30,17 +30,17 @@ body{background:var(--bg);color:var(--ink);font-family:'Source Serif 4',serif;mi
 .stat-input-row:last-child{margin-bottom:0;}
 .stat-name{font-family:'Oswald',sans-serif;font-size:12px;color:var(--muted);}
 .stat-num{width:64px;background:var(--paper);border:2px solid var(--ink);color:var(--ink);font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;padding:5px 8px;text-align:center;outline:none;}
-.stat-num:focus{border-color:var(--red);}
-.submit-btn{width:100%;background:var(--ink);color:var(--bg);font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:14px;border:none;cursor:pointer;transition:all .15s;margin-top:8px;box-shadow:3px 3px 0 var(--red);}
-.submit-btn:hover{background:var(--red);box-shadow:3px 3px 0 var(--ink);}
+.submit-btn{width:100%;background:var(--ink);color:var(--bg);font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:14px;border:none;cursor:pointer;margin-top:8px;box-shadow:3px 3px 0 var(--red);}
+.submit-btn:hover{background:var(--red);}
+.submit-btn:disabled{opacity:.6;cursor:not-allowed;}
 .success-card{background:var(--paper);border:3px solid var(--green);box-shadow:4px 4px 0 var(--green);padding:40px;text-align:center;display:none;}
 .success-icon{font-size:40px;margin-bottom:12px;}
 .success-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;}
 .success-sub{color:var(--muted);font-size:14px;font-style:italic;}
 .submit-another{display:inline-block;margin-top:20px;background:var(--ink);color:var(--bg);font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:10px 24px;border:none;cursor:pointer;}
-.submit-another:hover{background:var(--red);}
-.game-info{background:var(--bg2);border:1px solid var(--border);padding:10px 14px;margin-top:6px;font-family:'Oswald',sans-serif;font-size:12px;color:var(--muted);display:none;}
-.game-info.show{display:block;}
+.status-msg{text-align:center;padding:10px;font-family:'Oswald',sans-serif;font-size:13px;margin-top:10px;display:none;}
+.status-msg.error{background:rgba(192,57,43,.1);color:var(--red);border:1px solid rgba(192,57,43,.2);}
+.status-msg.loading{background:rgba(45,90,39,.08);color:var(--green);border:1px solid rgba(45,90,39,.2);}
 </style>
 </head>
 <body>
@@ -59,18 +59,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Source Serif 4',serif;mi
         <div class="field"><label>Your Team</label>
           <select id="playerTeam" onchange="updateGameOptions()">
             <option value="">Select...</option>
-            <optgroup label="Pain is Power">
-              <option value="Baylor">Baylor Bears</option>
-              <option value="KState">Kansas State Wildcats</option>
-              <option value="Memphis">Memphis Tigers</option>
-              <option value="Oregon">Oregon Ducks</option>
-            </optgroup>
-            <optgroup label="Luv is Rage">
-              <option value="AirForce">Air Force Falcons</option>
-              <option value="Auburn">Auburn Tigers</option>
-              <option value="TexasAM">Texas A&M Aggies</option>
-              <option value="UCLA">UCLA Bruins</option>
-            </optgroup>
+            <optgroup label="Pain is Power"><option value="Baylor">Baylor Bears</option><option value="KState">Kansas State</option><option value="Memphis">Memphis Tigers</option><option value="Oregon">Oregon Ducks</option></optgroup>
+            <optgroup label="Luv is Rage"><option value="AirForce">Air Force Falcons</option><option value="Auburn">Auburn Tigers</option><option value="TexasAM">Texas A&M Aggies</option><option value="UCLA">UCLA Bruins</option></optgroup>
           </select>
         </div>
         <div class="field"><label>Week</label>
@@ -79,7 +69,6 @@ body{background:var(--bg);color:var(--ink);font-family:'Source Serif 4',serif;mi
       </div>
       <div class="field"><label>Game</label>
         <select id="gameSelect"><option value="">Select team & week first...</option></select>
-        <div class="game-info" id="gameInfo"></div>
       </div>
     </div>
     <div class="form-card">
@@ -114,6 +103,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Source Serif 4',serif;mi
       </div>
     </div>
     <button class="submit-btn" id="submitBtn" onclick="submitStats()">Submit Stats →</button>
+    <div class="status-msg" id="statusMsg"></div>
   </div>
   <div class="success-card" id="successCard">
     <div class="success-icon">🏈</div>
@@ -123,8 +113,10 @@ body{background:var(--bg);color:var(--ink);font-family:'Source Serif 4',serif;mi
   </div>
 </div>
 <script>
-const TEAM_NAMES={Baylor:"Baylor Bears",KState:"Kansas State Wildcats",Memphis:"Memphis Tigers",Oregon:"Oregon Ducks",AirForce:"Air Force Falcons",Auburn:"Auburn Tigers",TexasAM:"Texas A&M Aggies",UCLA:"UCLA Bruins"};
-const SCHEDULE=[
+var DB='https://pefl-cefl-default-rtdb.firebaseio.com';
+var LEAGUE='cefl';
+var TEAM_NAMES={Baylor:"Baylor Bears",KState:"Kansas State Wildcats",Memphis:"Memphis Tigers",Oregon:"Oregon Ducks",AirForce:"Air Force Falcons",Auburn:"Auburn Tigers",TexasAM:"Texas A&M Aggies",UCLA:"UCLA Bruins"};
+var SCHEDULE=[
   {week:1,games:[{home:"Baylor",away:"Oregon"},{home:"Memphis",away:"UCLA"},{home:"AirForce",away:"KState"},{home:"Auburn",away:"TexasAM"}]},
   {week:2,games:[{home:"Auburn",away:"UCLA"},{home:"Oregon",away:"KState"},{home:"TexasAM",away:"Memphis"},{home:"Baylor",away:"AirForce"}]},
   {week:3,games:[{home:"Oregon",away:"UCLA"},{home:"Baylor",away:"Auburn"},{home:"AirForce",away:"TexasAM"},{home:"KState",away:"Memphis"}]},
@@ -138,80 +130,64 @@ const SCHEDULE=[
   {week:11,games:[{home:"Memphis",away:"Oregon"},{home:"AirForce",away:"UCLA"},{home:"KState",away:"TexasAM"},{home:"Auburn",away:"Baylor"}]},
   {week:12,games:[{home:"Baylor",away:"UCLA"},{home:"TexasAM",away:"AirForce"},{home:"Oregon",away:"Auburn"},{home:"Memphis",away:"KState"}]},
 ];
-
-window.addEventListener('DOMContentLoaded', function() {
-  var weekSel = document.getElementById('gameWeek');
-  for (var i = 1; i <= 12; i++) {
-    var opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = 'Week ' + i;
-    weekSel.appendChild(opt);
-  }
+window.addEventListener('DOMContentLoaded',function(){
+  var sel=document.getElementById('gameWeek');
+  for(var i=1;i<=12;i++){var o=document.createElement('option');o.value=i;o.textContent='Week '+i;sel.appendChild(o);}
 });
-
 function updateGameOptions(){
-  const team=document.getElementById('playerTeam').value;
-  const week=parseInt(document.getElementById('gameWeek').value);
-  const sel=document.getElementById('gameSelect');
-  const info=document.getElementById('gameInfo');
+  var team=document.getElementById('playerTeam').value;
+  var week=parseInt(document.getElementById('gameWeek').value);
+  var sel=document.getElementById('gameSelect');
   sel.innerHTML='<option value="">Select a game...</option>';
-  info.className='game-info';
   if(!team||!week) return;
-  const wk=SCHEDULE.find(w=>w.week===week);
+  var wk=SCHEDULE.find(function(w){return w.week===week;});
   if(!wk) return;
-  const myGames=wk.games.filter(g=>g.home===team||g.away===team);
+  var myGames=wk.games.filter(function(g){return g.home===team||g.away===team;});
   if(!myGames.length){sel.innerHTML='<option value="">No game this week</option>';return;}
-  myGames.forEach(g=>{
-    const side=g.home===team?'Home':'Away';
-    const opt=document.createElement('option');
-    opt.value=JSON.stringify(g);
-    opt.textContent=`${TEAM_NAMES[g.home]} vs ${TEAM_NAMES[g.away]} (${side})`;
-    sel.appendChild(opt);
+  myGames.forEach(function(g){
+    var side=g.home===team?'Home':'Away';
+    var o=document.createElement('option');
+    o.value=JSON.stringify(g);
+    o.textContent=(TEAM_NAMES[g.home]||g.home)+' vs '+(TEAM_NAMES[g.away]||g.away)+' ('+side+')';
+    sel.appendChild(o);
   });
-  if(myGames.length===1){
-    sel.selectedIndex=1;
-    const g=myGames[0];
-    info.className='game-info show';
-    info.innerHTML=`${TEAM_NAMES[g.home]} vs ${TEAM_NAMES[g.away]} — Week ${week}`;
-  }
+  if(myGames.length===1) sel.selectedIndex=1;
 }
-var BIN_ID='6a25d244da38895dfe9664c6';
-var API_KEY='$2a$10$Ii4MSYaZNvLPJFsP07/U.eZev7vokGg9uFs36nt4IG3sJ7rbdt8T6';
+function showStatus(msg,type){var el=document.getElementById('statusMsg');el.textContent=msg;el.className='status-msg '+type;el.style.display='block';}
 async function submitStats(){
   var name=document.getElementById('playerName').value.trim();
   var team=document.getElementById('playerTeam').value;
   var week=document.getElementById('gameWeek').value;
   var gameRaw=document.getElementById('gameSelect').value;
-  if(!name||!team||!week||!gameRaw){alert('Please fill in all game info fields.');return;}
+  if(!name||!team||!week||!gameRaw){alert('Please fill in your name, team, week, and select a game.');return;}
   var game;try{game=JSON.parse(gameRaw);}catch(e){alert('Please select a valid game.');return;}
   var btn=document.getElementById('submitBtn');
   btn.disabled=true;btn.textContent='Submitting...';
+  showStatus('Saving your stats...','loading');
   var fields=['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats','safeties','def_tds'];
-  var entry={id:Date.now()+'_'+Math.random().toString(36).slice(2),league:'CEFL',status:'pending',submitted:new Date().toISOString(),player_name:name,team:team,week:parseInt(week),home:game.home,away:game.away};
-  fields.forEach(function(f){var el=document.getElementById(f);var v=el?el.value:'';entry[f]=v===''?0:parseInt(v)||0;});
+  var entry={league:LEAGUE,status:'pending',submitted:new Date().toISOString(),player_name:name,team:team,week:parseInt(week),home:game.home,away:game.away};
+  fields.forEach(function(f){var el=document.getElementById(f);entry[f]=el?parseInt(el.value)||0:0;});
   try{
-    var getRes=await fetch('https://api.jsonbin.io/v3/b/'+BIN_ID+'/latest',{headers:{'X-Master-Key':API_KEY}});
-    var getData=await getRes.json();
-    var current=getData.record.stats||[];
-    current.push(entry);
-    var putRes=await fetch('https://api.jsonbin.io/v3/b/'+BIN_ID,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':API_KEY},body:JSON.stringify({stats:current})});
-    if(putRes.ok){
+    var res=await fetch(DB+'/stats.json',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(entry)});
+    if(res.ok){
       document.getElementById('formWrap').style.display='none';
       document.getElementById('successCard').style.display='block';
-    } else { throw new Error('Save failed'); }
+    } else { throw new Error('HTTP '+res.status); }
   }catch(e){
-    alert('Something went wrong. Please try again.');
+    showStatus('Something went wrong: '+e.message,'error');
     btn.disabled=false;btn.textContent='Submit Stats →';
   }
 }
 function resetForm(){
   document.getElementById('formWrap').style.display='block';
   document.getElementById('successCard').style.display='none';
+  document.getElementById('statusMsg').style.display='none';
+  var btn=document.getElementById('submitBtn');btn.disabled=false;btn.textContent='Submit Stats →';
   document.getElementById('playerName').value='';
   document.getElementById('playerTeam').value='';
   document.getElementById('gameWeek').value='';
   document.getElementById('gameSelect').innerHTML='<option value="">Select team & week first...</option>';
-  ['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats','safeties','def_tds'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=0;});
+  ['pass_tds','pass_att','pass_comp','ints_thrown','rush_tds','rushes','rec_tds','receptions','targets','tackles','ints_caught','swats','safeties','def_tds'].forEach(function(f){var el=document.getElementById(f);if(el)el.value=0;});
 }
 </script>
 </body>
