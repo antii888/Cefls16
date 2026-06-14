@@ -163,37 +163,36 @@ async function fetchAndRender(){
 }
 
 function buildStandings(){
-  var approved=getApproved();
   var records={};
   Object.keys(TEAMS).forEach(function(t){records[t]={w:0,l:0,diff:0};});
-  var games={};
-  approved.forEach(function(s){
-    if(!s.score) return;
-    var key='w'+s.week+'_'+[s.home,s.away].sort().join('_');
-    if(!games[key]) games[key]={home:s.home,away:s.away,scores:{}};
-    if(!games[key].scores[s.team]) games[key].scores[s.team]=parseInt(s.score)||0;
+
+  var gameLookup={};
+  SCHEDULE.forEach(function(wk){
+    wk.games.forEach(function(g){
+      var key='w'+wk.week+'_'+[g.home,g.away].sort().join('_');
+      gameLookup[key]={home:g.home,away:g.away};
+    });
   });
+
   Object.keys(_scores).forEach(function(key){
     var sc=_scores[key];
-    if(!sc||sc.home===''||sc.away==='') return;
-    if(!games[key]){var p=key.split('_');games[key]={home:p[1],away:p[2],scores:{}};}
-    games[key].adminHome=sc.home;games[key].adminAway=sc.away;
+    if(sc.home===''||sc.away===''||sc.home===undefined||sc.away===undefined) return;
+    var gl=gameLookup[key];
+    if(!gl) return;
+    var hs=parseInt(sc.home),as=parseInt(sc.away);
+    if(isNaN(hs)||isNaN(as)) return;
+    if(hs>as){records[gl.home].w++;records[gl.away].l++;}
+    else if(as>hs){records[gl.away].w++;records[gl.home].l++;}
+    records[gl.home].diff+=hs-as;
+    records[gl.away].diff+=as-hs;
   });
-  Object.values(games).forEach(function(g){
-    var hs=g.adminHome!==undefined?g.adminHome:(g.scores[g.home]??null);
-    var as=g.adminAway!==undefined?g.adminAway:(g.scores[g.away]??null);
-    if(hs===null||as===null) return;
-    hs=parseInt(hs);as=parseInt(as);
-    if(hs>as){records[g.home].w++;records[g.away].l++;}
-    else if(as>hs){records[g.away].w++;records[g.home].l++;}
-    if(records[g.home]) records[g.home].diff+=hs-as;
-    if(records[g.away]) records[g.away].diff+=as-hs;
-  });
-  function confHTML(teams,confName,cls){
+
+  function confHTML(conf,teams,confName,cls){
     var sorted=teams.slice().sort(function(a,b){
       var ra=records[a],rb=records[b];
       var ga=ra.w+ra.l,gb=rb.w+rb.l;
-      return (gb?rb.w/gb:0)-(ga?ra.w/ga:0)||rb.diff-ra.diff;
+      var wa=ga?ra.w/ga:0,wb=gb?rb.w/gb:0;
+      return wb-wa||rb.diff-ra.diff;
     });
     return '<div class="standings-card"><div class="standings-head"><span class="conf-name '+cls+'">'+confName+'</span></div>'
       +'<table class="standings-table">'+sorted.map(function(t,i){
@@ -201,7 +200,9 @@ function buildStandings(){
         return '<tr><td class="rank">'+(i+1)+'</td><td class="tname '+pl+'">'+(pl?'★ ':'')+TEAM_NAMES[t]+'</td><td class="record">'+r.w+'-'+r.l+'</td><td class="diff '+(d>0?'pos':d<0?'neg':'')+'">'+(d===0?'—':d>0?'+'+d:d)+'</td></tr>';
       }).join('')+'</table></div>';
   }
-  document.getElementById('standingsGrid').innerHTML=confHTML(PIP,'Pain is Power Conference','pip')+confHTML(LIR,'Luv is Rage Conference','lir');
+  document.getElementById('standingsGrid').innerHTML=
+    confHTML('PIP',['Baylor','KState','Memphis','Oregon'],'Pain is Power Conference','pip')+
+    confHTML('LIR',['AirForce','Auburn','TexasAM','UCLA'],'Luv is Rage Conference','lir');
 }
 
 function buildWeekFilters(){
